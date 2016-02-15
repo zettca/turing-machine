@@ -1,0 +1,80 @@
+body{
+	margin: 0;
+	padding-top: 10px;
+	padding-left: 10px;
+	color: #222;
+	background-color: #EEE;
+	font-family: "Open Sans", sans-serif;
+}
+
+section{
+    margin-bottom: 20px;
+}
+
+#tape{
+    overflow: hidden;
+    font-family: "Roboto Mono";
+    border-width: 1px 0px 1px 1px;
+    border-color: black;
+    border-style: solid;
+    
+    display: flex;
+    flex-wrap: nowrap;
+    flex-direction: row;
+    align-items: flex-start;
+    align-content: flex-start;
+    justify-content: flex-start;
+}
+
+.cell{
+    margin: 0;
+    width: 10px;
+    height: 20px;
+    padding: 8px 10px;
+    text-align: center;
+	background-color: #EEE;
+    border-right: 1px solid black;
+
+    white-space: pre;
+    align-self: center;
+}
+
+.cell-selected{
+    box-shadow: inset 0px 0px 0px 2px red;
+}
+
+.cell::after{
+    content: attr(index);
+    color: #666;
+    font-size: 0.5em;
+    position: relative;
+    top: 10px;
+    -webkit-user-select: none;
+    -moz-user-select: none;
+    user-select: none;
+}
+
+
+.inline{
+    display: inline-block;
+    margin-right: 20px;
+}
+
+textarea{
+    display: block;
+}
+
+
+#controls input[type=text]{
+    width: 200px;
+}
+
+#code{
+    width: 120px;
+}
+
+#console{
+    width: 300px;
+    color: #CCC;
+    background: #333;
+}
