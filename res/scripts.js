@@ -5,6 +5,7 @@ var turingMachine = function(el){
     this.tapePos = 1;
     this.state = 1;
     this.trans = {};
+    this.iters = 0;
     
     this.reset = function(){
         this.tapeStr = "";
@@ -12,6 +13,7 @@ var turingMachine = function(el){
         this.tapePos = 1;
         this.state = 1;
         this.trans = {};
+        this.iters = 0;
     };
     
     this.clearTape = function(){
@@ -32,15 +34,15 @@ var turingMachine = function(el){
         }
     };
     
-    this.setTape = function(str){
+    this.setTape = function(str, k){
         this.clearTape();
-        this.tapeStr = str;
-    
+        this.tapeStr = " ".repeat(k-1 || 0) + str;
+
         for (var i=0;i<this.tapeLen;i++){
             var cell = document.createElement("div");
-            cell.innerHTML = str[i] || " ";
+            cell.innerHTML = this.tapeStr[i] || " ";
             cell.className = "cell";
-            cell.setAttribute("index", (str[i]) ? i+1 : "");
+            cell.setAttribute("index", (this.tapeStr[i]) ? i+1 : "");
             this.tapeEle.appendChild(cell);
         }
     };
@@ -57,14 +59,16 @@ var turingMachine = function(el){
     };
     
     this.execTransition = function(){
+        this.iters++;
+        this.tapeEle.children[this.tapePos-1].classList.remove("cell-selected");
         var todos = this.trans[this.state];
         
         if (!todos){
-            console.log("idk what to do!");
+            log("idk what to do!");
             return;
         }
         
-        console.log("running on state="+this.state + " | tapePos="+this.tapePos);
+        log("Iteration " + this.iters + " | State "+this.state + " | Position "+this.tapePos);
         
         
         for (var i=0; i<todos.length;i++){
@@ -77,7 +81,8 @@ var turingMachine = function(el){
             }
         }
         
-
+        this.tapeEle.children[this.tapePos-1].classList.add("cell-selected");
+        
     };
     
     this.exec = function(limit){
@@ -89,15 +94,17 @@ var turingMachine = function(el){
     
 };
 
-var cnsl = document.getElementById("console");
+var tape = document.getElementById("tape");
 var code = document.getElementById("code");
+var cnsl = document.getElementById("console");
 var text = document.getElementsByName("tapeText")[0];
+var startPos = document.getElementsByName("tapeStart")[0];
 
-var tm = new turingMachine(document.getElementById("tape"));
-tm.setTape("AAAAAAAAAAAAAAAAAAAA");
+var tm = new turingMachine(tape);
+tm.setTape("HELLO WORLD");
 
 function load(){
-    tm.setTape(text.value);
+    tm.setTape(text.value, startPos.value);
 }
 
 function clear(){
@@ -113,9 +120,13 @@ function compile(){
     cnsl.value = "";
     var err = "";
     var lines = code.value.split("\n");
+    
     for (var i=0; i<lines.length; i++){
         var args = lines[i].split(",");
-        if (args.length != 5){
+        if (!lines[i]){
+            err = "line is empty.";
+            break;
+        } else if (args.length != 5){
             err = "incorrect argument number.";
             break;
         } else if (!isState(args[0]) || !isState(args[2])){
@@ -129,9 +140,10 @@ function compile(){
         }
         
     }
+    
     if (!err){
         log("Program successfully compiled.");
-        console.log(JSON.stringify(tm.trans));
+        tm.tapeEle.children[tm.tapePos-1].classList.add("cell-selected");
         return true;
     } else{
         log("Error compiling program...");
@@ -140,9 +152,6 @@ function compile(){
         return false;
     }
 }
-
-
-
 
 
 // ============================ */
@@ -160,5 +169,9 @@ function isState(exp){
 
 function log(msg){
     console.log(msg);
-    cnsl.value += msg + '\n';
+    if (cnsl.value){
+        cnsl.value += '\n';
+    }
+    cnsl.value += msg;
+    cnsl.scrollTop = cnsl.scrollHeight;
 }

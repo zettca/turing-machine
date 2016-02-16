@@ -3,37 +3,39 @@
 <head>
 	<title>Turing Machine</title>
 	<meta charset="UTF-8" content="text/html">
-	<meta name="viewport" content="width=device-width, initial-scale=1, user-scalable=yes">
+	<meta name="viewport" content="width=device-width, initial-scale=1">
 	<meta name="description" content="Turing Machine">
 	<meta name="keywords" content="Turing Machine Computer Science Complexity zettca">
 
 	<link rel="shortcut icon" href="favicon.ico">
 	<link rel='stylesheet' href='https://fonts.googleapis.com/css?family=Open+Sans'>
 	<link rel='stylesheet' href='https://fonts.googleapis.com/css?family=Roboto+Mono'>
+	<link rel="stylesheet" href="https://maxcdn.bootstrapcdn.com/bootstrap/3.3.6/css/bootstrap.min.css">
 	<link rel="stylesheet" href="res/styles.css">
 </head>
 
 <body>
-	<section id="tape">
-	</section>
+	<section id="tape"></section>
 	
 	<section id="controls">
-	    <input type="text" name="tapeText"/>
-        <input type="button" value="Load" onclick="load()"/>
-    	<input type="button" value="Compile" onclick="compile()"/>
-    	<input type="button" value="Step" onclick="stepe()"/>
+		<input type="number" name="tapeStart" min="1" max="50" value="1" defaultValue="1" />
+		<input type="text" name="tapeText"/>
+		<input type="button" value="Load" onclick="load()"/>
+		<input type="button" value="Compile" onclick="compile()"/>
+		<input type="button" value="Step" onclick="stepe()"/>
 	</section>
 	
 	<section class="inline">
-	    <textarea id="code" name="tapeCode" rows="8" colls="10" placeholder="1,A,2,B,>"></textarea>
+		<h3>Code</h3>
+		<textarea id="code" name="tapeCode" placeholder="1,A,2,B,>"></textarea>
 	</section>
 	
 	<section class="inline">
-	    <textarea id="console" name="tapeConsole" rows="8" colls="10"></textarea>
+		<h3>Console</h3>
+		<textarea disabled id="console" name="tapeConsole"></textarea>
 	</section>
 	
-	<footer>
-	</footer>
+	<footer></footer>
 	
 	<script src="res/scripts.js"></script>
 </body>
