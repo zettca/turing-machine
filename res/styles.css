@@ -1,70 +1,16 @@
 body{
 	margin: 0;
-	padding-top: 10px;
-	padding-left: 10px;
+	padding: 0;
 	color: #222;
 	background-color: #EEE;
 	font-family: "Open Sans", sans-serif;
 }
 
 section{
+    margin-top: 10px;
+    margin-left: 20px;
     margin-bottom: 20px;
-}
-
-#tape{
-    overflow: hidden;
-    font-family: "Roboto Mono";
-    border-width: 1px 0px 1px 1px;
-    border-color: black;
-    border-style: solid;
     
-    display: flex;
-    flex-wrap: nowrap;
-    flex-direction: row;
-    align-items: flex-start;
-    align-content: flex-start;
-    justify-content: flex-start;
-}
-
-.cell{
-    margin: 0;
-    width: 32px;
-    padding: 8px 10px;
-    text-align: center;
-	background-color: #EEE;
-    border-right: 1px solid black;
-
-    font-size: 1.2em;
-    white-space: pre;
-    align-self: center;
-}
-
-.cell-selected{
-    box-shadow: 0px 2px 0px 0px #f30 inset;
-}
-
-.cell::after{
-    content: attr(index);
-    color: #666;
-    font-size: 0.5em;
-    position: relative;
-    top: 1.2em;
-    left: -0.1em;
-    font-family: sans-serif;
-    
-    -webkit-user-select: none;
-    -moz-user-select: none;
-    user-select: none;
-}
-
-
-.inline{
-    display: inline-block;
-    margin-right: 20px;
-}
-
-h3{
-    margin: 6px 0;
 }
 
 textarea{
@@ -74,18 +20,79 @@ textarea{
     border: 1px solid silver;
 }
 
+/* ============================ */
+
+#tape{
+    position: relative;
+    font-family: "Roboto Mono";
+    
+    display: table;
+    border-collapse: collapse;
+}
+
+.wrapIt{
+    width: 100%;
+    overflow: hidden;
+}
+
+.cell{
+    margin: 0;
+    width: 32px;
+    padding: 8px 10px;
+    text-align: center;
+	background-color: #EEE;
+	
+	display: table-cell;
+	
+    border-width: 1px;
+    border-color: black;
+    border-style: solid;
+    border-collapse: collapse;
+
+    font-size: 1.2em;
+    white-space: pre;
+    align-self: center;
+}
+
+.cell::after{
+    content: attr(index);
+    color: #666;
+    font-size: 0.5em;
+    font-family: sans-serif;
+    
+    display: inline-block;
+    width: 2px;
+    
+    position: relative;
+    top: 1.2em;
+    left: -0.1em;
+}
+
+.head{
+    box-shadow: 0px 2px 0px 0px #f30 inset;
+}
+
+.block{
+    display: inline-block;
+    margin-right: 10px;
+}
+
+.block input{
+    display: block;
+}
+
+.no-select{
+    -ms-user-select: none;
+    -webkit-user-select: none;
+    -moz-user-select: none;
+    user-select: none;
+}
+
 
 #controls input[type=number]{
     width: 40px;
 }
 
-
 #code{
-    width: 120px;
-}
-
-#console{
-    color: #CCC;
-    width: 360px;
-    background: #333;
+    width: 160px;
 }

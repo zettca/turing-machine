@@ -15,28 +15,29 @@
 </head>
 
 <body>
-	<section id="tape"></section>
+	<div class="wrapIt"><section id="tape"></section></div>
 	
 	<section id="controls">
-		<input type="number" name="tapeStart" min="1" max="50" value="1" defaultValue="1" />
+		<h3>Controls</h3>
+		<input type="number" name="tapeStart" min="1" max="99" value="1" defaultValue="1" />
 		<input type="text" name="tapeText"/>
 		<input type="button" value="Load" onclick="load()"/>
-		<input type="button" value="Compile" onclick="compile()"/>
+		<br/>
+		<input type="button" value="Run" onclick="run()"/>
 		<input type="button" value="Step" onclick="stepe()"/>
+		<input type="button" value="Reset" onclick="reset()"/>
 	</section>
 	
-	<section class="inline">
+	<section class="block">
 		<h3>Code</h3>
 		<textarea id="code" name="tapeCode" placeholder="1,A,2,B,>"></textarea>
-	</section>
-	
-	<section class="inline">
-		<h3>Console</h3>
-		<textarea disabled id="console" name="tapeConsole"></textarea>
+		<input type="button" value="Compile Code" onclick="compile()"/>
 	</section>
 	
 	<footer></footer>
 	
+	<script src="https://code.jquery.com/jquery-2.2.0.min.js"></script>
+	<script src="https://code.jquery.com/ui/1.11.3/jquery-ui.min.js"></script>
 	<script src="res/scripts.js"></script>
 </body>
 </html>
