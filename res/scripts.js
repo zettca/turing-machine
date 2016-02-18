@@ -1,35 +1,42 @@
+var programList = 
+{
+    flipHA: ["HAHAHAHAHAAAA", "I,H,I,A,R\nI,A,I,H,R"],
+    altBinary: ["101010001", "I,0,0,0,R\nI,1,1,1,R\n; last was 0\n0,0,R,0,R\n0,1,1,1,R\n; last was 1\n1,0,0,0,R\n1,1,R,1,R"],
+    seq000111: ["0000011111", "I,1,R,1,R\nI,0,0,0,R\n0,0,0,0,R\n0,1,1,1,R\n1,0,R,0,R\n1,1,1,1,R"]
+};
+
 var turingMachine = function(el){
     this.tapeEle = el;
-    this.tapeStr = "";
-    this.tapeLen = 200;
+    this.tapeWord = "";
+    this.tapeCellNum = 200;
     this.tapePos = 1;
-    this.state = 1;
-    this.iters = 0;
+    this.state = "I";
+    this.iter = 1;
     this.trans = {};
     
     this.restart = function(){
-        this.tapeStr = "";
-        this.tapeLen = 200;
+        this.tapeWord = "";
+        this.tapeCellNum = 200;
         this.tapePos = 1;
-        this.state = 1;
-        this.iters = 0;
+        this.state = "I";
+        this.iter = 1;
         this.clearTransitions();
     };
     
     this.clearTape = function(){
-        this.tapeStr = "";
+        this.tapeWord = "";
         while (this.tapeEle.firstChild){
             this.tapeEle.removeChild(this.tapeEle.firstChild);
         }
     };
     
     this.readSymbol = function(){
-        return this.tapeStr[this.tapePos-1];
+        return this.tapeWord[this.tapePos-1];
     };
     
     this.writeTape = function(symb, i){
         if (i && symb.length == 1){
-            this.tapeStr[i] = symb;
+            this.tapeWord[i] = symb;
             this.tapeEle.children[i-1].innerHTML = symb;
         }
     };
@@ -37,18 +44,13 @@ var turingMachine = function(el){
     this.setTape = function(str, k){
         log("Loading to Tape: " + str);
         this.clearTape();
-        this.tapeStr = " ".repeat(k-1 || 0) + str;
+        this.tapeWord = " ".repeat(k-1 || 0) + str;
 
-        for (var i=0; i<this.tapeLen; i++){
+        for (var i=0; i<this.tapeCellNum; i++){
             var cell = document.createElement("div");
             cell.classList.add("cell");
-            if (this.tapeStr[i]){
-                cell.innerHTML = this.tapeStr[i];
-            } else{
-                cell.innerHTML = " ";
-                cell.classList.add("no-select");
-            }
-            cell.setAttribute("index", (this.tapeStr[i]) ? i+1 : "");
+            cell.innerHTML = this.tapeWord[i] ? this.tapeWord[i] : " ";
+            cell.setAttribute("index", (this.tapeWord[i]) ? i+1 : "");
             this.tapeEle.appendChild(cell);
         }
         
@@ -74,8 +76,7 @@ var turingMachine = function(el){
             return false;
         }
         
-        log(this.iters + ": State " + this.state + " | Position " + this.tapePos);
-        
+        log(this.iter + ": State " + this.state + " | Position " + this.tapePos);
         
         var j = -1;
         
@@ -87,7 +88,7 @@ var turingMachine = function(el){
         }
         
         if (j!=-1){
-            this.iters++;
+            this.iter++;
             this.tapeEle.children[this.tapePos-1].classList.remove("head");
             //log("Transition matched. Actually doing stuff...");
             this.writeTape(stateTrans[j].w, this.tapePos);
@@ -100,10 +101,6 @@ var turingMachine = function(el){
                 case 'F':
                 case 'R':
                     log("Program finished due to Reject State");
-                    return false;
-                case 'H':
-                case 'S':
-                    log("Program finished due to Stop/Halt State");
                     return false;
             }
             switch (stateTrans[j].d){
@@ -144,15 +141,27 @@ var startPos = document.getElementsByName("tapeStart")[0];
 
 text.onkeypress = function(e){
   if (e.keyCode == 13){ // Enter
-    load();
+    loadTape();
   }
 };
 
 var tm = new turingMachine(tape);
 tm.setTape("HELLO WORLD");
 
-function load(){
+function loadTape(){
     tm.setTape(text.value, startPos.value);
+}
+
+function loadProgram(val){
+    if (!programList[val]){
+        alert("Program not found. wat " + val);
+        return;
+    }
+    
+    text.value = programList[val][0];
+    code.value = programList[val][1];
+    tm.setTape(text.value, startPos.value);
+    compile();
 }
 
 function clear(){
@@ -169,6 +178,8 @@ function stepe(){
 
 function reset(){
     tm.restart();
+    loadTape();
+    compile();
     tape.style.left = 0 + "px";
 }
 
@@ -180,21 +191,20 @@ function compile(){
     for (var i=0; i<lines.length; i++){ // check for errors
         var args = lines[i].split(",");
         if (!lines[i]){
-            err = "line is empty.";
-            break;
+            continue;   // empty line
         } else if (lines[i][0] == ";"){
-            continue;
+            continue;   // comment
         } else if (args.length != 5){
             err = "incorrect argument number.";
             break;
         } else if (!isState(args[0]) || !isState(args[2])){
-            err = "states must be integers or T|F|S.";
+            err = "states must be integers or special states IAR.";
             break;
         } else if (!isSymb(args[1]) || !isSymb(args[3])){
             err = "symbols must be single characters.";
             break;
         } else if (!args[4] || "LRN<|>".indexOf(args[4]) == -1){
-            err = "transition must be either L|R|N or < | >.";
+            err = "transition must be either LRN or <>|.";
             break;
         } else{ // no errors in line, wee
             tm.pushTransition(args[0], args[1], args[2], args[3], args[4]);
@@ -224,8 +234,8 @@ function isState(exp){
     if (!exp) return false;
     if (!isNaN(exp) && (exp % 1 == 0)){
         return true; // is Integer
-    } else if(exp.length == 1 && "TFS".indexOf(exp) != -1){
-        return true; // is T/F/S/H
+    } else if(exp.length == 1 && "IAR".indexOf(exp) != -1){
+        return true; // is accept/reject state
     } else{
         return false;
     }
@@ -238,24 +248,26 @@ function log(msg){
 
 /* ==================== */
 
-var el = tape;
 var selected = null;
 var x_pos = 0, x_elem = 0;
 
-el.onmousedown = function(){
+tape.onmousedown = function(e){
     selected = this;
+    x_pos = document.all ? window.event.clientX : e.pageX;
     x_elem = x_pos - selected.offsetLeft;
+    document.body.style.cursor = "ew-resize";
     return false;
 };
 
 document.onmousemove = function(e){
-    x_pos = document.all ? window.event.clientX : e.pageX;
     if (selected){
-        selected.style.left = (x_pos - x_elem) + 'px';
+        x_pos = document.all ? window.event.clientX : e.pageX;
+        selected.style.left = (x_pos - x_elem - 20) + 'px';
     }
 };
 
-document.onmouseup = function(){
+document.onmouseup = function(e){
+    document.body.style.cursor = "default";
     if (selected && parseInt(selected.style.left, 10)>0){
         selected.style.left = 0 + 'px';
     }

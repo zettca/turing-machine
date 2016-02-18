@@ -10,18 +10,18 @@
 	<link rel="shortcut icon" href="favicon.ico">
 	<link rel='stylesheet' href='https://fonts.googleapis.com/css?family=Open+Sans'>
 	<link rel='stylesheet' href='https://fonts.googleapis.com/css?family=Roboto+Mono'>
-	<link rel="stylesheet" href="https://maxcdn.bootstrapcdn.com/bootstrap/3.3.6/css/bootstrap.min.css">
+	<link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/normalize/3.0.3/normalize.min.css">
 	<link rel="stylesheet" href="res/styles.css">
 </head>
 
 <body>
-	<div class="wrapIt"><section id="tape"></section></div>
+	<section class="wrapIt no-select"><div id="tape"></div></section>
 	
-	<section id="controls">
+	<section>
 		<h3>Controls</h3>
 		<input type="number" name="tapeStart" min="1" max="99" value="1" defaultValue="1" />
 		<input type="text" name="tapeText"/>
-		<input type="button" value="Load" onclick="load()"/>
+		<input type="button" value="Load" onclick="loadTape()"/>
 		<br/>
 		<input type="button" value="Run" onclick="run()"/>
 		<input type="button" value="Step" onclick="stepe()"/>
@@ -30,14 +30,17 @@
 	
 	<section class="block">
 		<h3>Code</h3>
-		<textarea id="code" name="tapeCode" placeholder="1,A,2,B,>"></textarea>
+		<textarea id="code" name="tapeCode" placeholder="I,A,I,B,>"></textarea>
+		<select onchange="loadProgram(this.value)">
+    		<option value="" disabled selected>Load program</option>
+			<option value="flipHA">Flip HA</option>
+			<option value="altBinary">Alternate Binary</option>
+			<option value="seq000111">0^n 1^n</option>
+		</select>
 		<input type="button" value="Compile Code" onclick="compile()"/>
 	</section>
 	
 	<footer></footer>
-	
-	<script src="https://code.jquery.com/jquery-2.2.0.min.js"></script>
-	<script src="https://code.jquery.com/ui/1.11.3/jquery-ui.min.js"></script>
 	<script src="res/scripts.js"></script>
 </body>
 </html>
