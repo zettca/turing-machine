@@ -1,5 +1,4 @@
-var programList = 
-{
+var programList = {
     flipHA: ["HAHAHAHAHAAAA", "I,H,I,A,R\nI,A,I,H,R"],
     altBinary: ["101010001", "I,0,0,0,R\nI,1,1,1,R\n; last was 0\n0,0,R,0,R\n0,1,1,1,R\n; last was 1\n1,0,0,0,R\n1,1,R,1,R"],
     seq000111: ["0000011111", "I,1,R,1,R\nI,0,0,0,R\n0,0,0,0,R\n0,1,1,1,R\n1,0,R,0,R\n1,1,1,1,R"]
@@ -30,11 +29,11 @@ var turingMachine = function(el){
         }
     };
     
-    this.readSymbol = function(){
+    this.getSymbol = function(){
         return this.tapeWord[this.tapePos-1];
     };
     
-    this.writeTape = function(symb, i){
+    this.setSymbol = function(symb, i){
         if (i && symb.length == 1){
             this.tapeWord[i] = symb;
             this.tapeEle.children[i-1].innerHTML = symb;
@@ -76,111 +75,97 @@ var turingMachine = function(el){
             return false;
         }
         
-        log(this.iter + ": State " + this.state + " | Position " + this.tapePos);
         
         var j = -1;
         
         for (var i=0; i<stateTrans.length; i++){
-            if (stateTrans[i].r == this.readSymbol()){
+            if (stateTrans[i].r == this.getSymbol()){
                 j = i;
                 break;
             }
         }
         
-        if (j!=-1){
-            this.iter++;
-            this.tapeEle.children[this.tapePos-1].classList.remove("head");
-            //log("Transition matched. Actually doing stuff...");
-            this.writeTape(stateTrans[j].w, this.tapePos);
-            this.state = stateTrans[j].ns;
-            switch (this.state){
-                case 'T':
-                case 'A':
-                    log("Program finished due to Accept State");
-                    return false;
-                case 'F':
-                case 'R':
-                    log("Program finished due to Reject State");
-                    return false;
-            }
-            switch (stateTrans[j].d){
-                case 'L':
-                case '<':
-                    this.tapePos = this.tapePos-1 || 1;
-                    break;
-                case 'R':
-                case '>':
-                    this.tapePos++;
-                    break;
-                case 'N':
-                    break;
-            }
-            this.tapeEle.children[this.tapePos-1].classList.add("head");
-            return true;
-        } else{
+        if (j==-1){
             log("No transition found. Stopping permanently.");
             return false;
         }
+        
+        this.iter++;
+        this.tapeEle.children[this.tapePos-1].classList.remove("head");
+        //log("Transition matched. Actually doing stuff...");
+        this.setSymbol(stateTrans[j].w, this.tapePos);
+        this.state = stateTrans[j].ns;
+        switch (this.state){
+            case 'A':
+                log("Program finished with Accept");
+                return false;
+            case 'R':
+                log("Program finished with Reject");
+                return false;
+        }
+        switch (stateTrans[j].d){
+            case 'L':
+            case '<':
+                this.tapePos = this.tapePos-1 || 1;
+                break;
+            case 'R':
+            case '>':
+                this.tapePos++;
+                break;
+            case 'N':
+                break;
+        }
+        this.tapeEle.children[this.tapePos-1].classList.add("head");
+        log("At Iteration " + this.iter + ", State " + this.state + ", Position " + this.tapePos);
+        return true;
     };
     
-    this.exec = function(limit){
+    this.compute = function(limit){
         if (limit && this.execTransition()){
-            setTimeout(this.exec(limit--), 1000);
+            setTimeout(this.compute(limit--), 1000);
         }
     };
-    
 };
 
 /* ==================== */
 
 var tape = document.getElementById("tape");
 var code = document.getElementById("code");
+var label = document.getElementById("tmInfos");
 var text = document.getElementsByName("tapeText")[0];
 var startPos = document.getElementsByName("tapeStart")[0];
-
-
-text.onkeypress = function(e){
-  if (e.keyCode == 13){ // Enter
-    loadTape();
-  }
-};
 
 var tm = new turingMachine(tape);
 tm.setTape("HELLO WORLD");
 
-function loadTape(){
-    tm.setTape(text.value, startPos.value);
-}
 
 function loadProgram(val){
-    if (!programList[val]){
-        alert("Program not found. wat " + val);
-        return;
-    }
+    if (!programList[val]) return;
     
     text.value = programList[val][0];
     code.value = programList[val][1];
-    tm.setTape(text.value, startPos.value);
-    compile();
+    reset();
 }
 
-function clear(){
-    tm.clearTape();
+function load(){
+    tm.setTape(text.value, startPos.value);
 }
 
 function run(){
-    tm.exec(100);
+    tm.compute(100);
 }
 
 function stepe(){
     tm.execTransition();
+    //label.innerHTML = "Iteration "+tm.iter+" State "+tm.state+" Position "+tm.tapePos;
 }
 
 function reset(){
     tm.restart();
-    loadTape();
+    load();
     compile();
     tape.style.left = 0 + "px";
+    label.innerHTML = "-";
 }
 
 function compile(){
@@ -226,6 +211,53 @@ function compile(){
 
 /* ==================== */
 
+text.onkeypress = function(e){
+  if (e.keyCode == 13){ // Enter
+    load();
+    this.blur();
+  }
+};
+
+var selected = null;
+var x_pos = 0, x_elem = 0;
+
+function onDown(e){
+    selected = this;
+    x_pos = e.touches ? e.touches[0].pageX : e.pageX;
+    x_elem = x_pos - selected.offsetLeft;
+    document.body.style.cursor = "ew-resize";
+    return false;
+}
+
+function onDrag(e){
+    if (selected){
+        x_pos = e.touches ? e.touches[0].pageX : e.pageX;
+        selected.style.left = (x_pos - x_elem - 20) + 'px';
+    }
+}
+
+function onUp(e){
+    document.body.style.cursor = "default";
+    if (selected && parseInt(selected.style.left, 10)>0){
+        selected.style.left = 0 + 'px';
+    }
+    selected = null;
+}
+
+tape.onmousedown = onDown;
+document.onmousemove = onDrag;
+document.onmouseup = onUp;
+tape.addEventListener("touchstart", onDown);
+tape.addEventListener("touchmove", onDrag);
+tape.addEventListener("touchend", onUp);
+
+/* ==================== */
+
+function log(msg){
+    console.log(msg);
+    label.innerHTML = msg;
+}
+
 function isSymb(str){
     return (str && str.length == 1);
 }
@@ -241,35 +273,18 @@ function isState(exp){
     }
 }
 
-function log(msg){
-    console.log(msg);
+function hasParams(url){
+    if (!url) url = window.location.href;
+    var loc = window.location;
+    return url[url.indexOf(loc.pathname)+loc.pathname.length] == "?";
 }
 
-
-/* ==================== */
-
-var selected = null;
-var x_pos = 0, x_elem = 0;
-
-tape.onmousedown = function(e){
-    selected = this;
-    x_pos = document.all ? window.event.clientX : e.pageX;
-    x_elem = x_pos - selected.offsetLeft;
-    document.body.style.cursor = "ew-resize";
-    return false;
-};
-
-document.onmousemove = function(e){
-    if (selected){
-        x_pos = document.all ? window.event.clientX : e.pageX;
-        selected.style.left = (x_pos - x_elem - 20) + 'px';
-    }
-};
-
-document.onmouseup = function(e){
-    document.body.style.cursor = "default";
-    if (selected && parseInt(selected.style.left, 10)>0){
-        selected.style.left = 0 + 'px';
-    }
-    selected = null;
-};
+function getParam(name, url){
+    if (!url) url = window.location.href;
+    name = name.replace(/[\[\]]/g, "\\$&");
+    var regex = new RegExp("[?&]" + name + "(=([^&#]*)|&|#|$)"),
+        results = regex.exec(url);
+    if (!results) return null;
+    if (!results[2]) return '';
+    return decodeURIComponent(results[2].replace(/\+/g, " "));
+}

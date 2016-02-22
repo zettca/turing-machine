@@ -21,11 +21,13 @@
 		<h3>Controls</h3>
 		<input type="number" name="tapeStart" min="1" max="99" value="1" defaultValue="1" />
 		<input type="text" name="tapeText"/>
-		<input type="button" value="Load" onclick="loadTape()"/>
+		<input type="button" value="Load" onclick="load()"/>
 		<br/>
 		<input type="button" value="Run" onclick="run()"/>
 		<input type="button" value="Step" onclick="stepe()"/>
 		<input type="button" value="Reset" onclick="reset()"/>
+		<br/>
+		<span id="tmInfos">-</span>
 	</section>
 	
 	<section class="block">
