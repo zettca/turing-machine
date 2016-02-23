@@ -8,15 +8,9 @@ body{
 }
 
 section{
+    display: block;
     margin-left: 20px;
     margin-bottom: 20px;
-}
-
-textarea{
-    resize: none;
-    height: 160px;
-    font-family: monospace;
-    border: 1px solid silver;
 }
 
 h3{
@@ -24,6 +18,11 @@ h3{
     font-size: 24px;
     font-weight: normal;
 }
+
+select, label{
+    display: block;
+}
+
 
 /* ============================ */
 
@@ -33,6 +32,13 @@ h3{
     margin-left: 20px;
     position: relative;
     border-collapse: collapse;
+}
+
+.no-select{
+    -ms-user-select: none;
+    -webkit-user-select: none;
+    -moz-user-select: none;
+    user-select: none;
 }
 
 .wrapIt{
@@ -79,28 +85,35 @@ h3{
     box-shadow: 0 4px 0 0 #f30 inset;
 }
 
-.block{
+
+.fblock{
+    float: left;
     display: inline-block;
-    margin-right: 10px;
+    margin-right: 12px;
 }
 
-.block input, .block select{
-    margin: 4px auto 0;
+.code textarea{
+    margin: 2px 0;
+    resize: none;
+    height: 160px;
+    font-family: monospace;
+    border: 1px solid silver;
+}
+
+.code input{
     display: block;
+    margin: auto;
 }
 
-.no-select{
-    -ms-user-select: none;
-    -webkit-user-select: none;
-    -moz-user-select: none;
-    user-select: none;
+.save-load input{
+    display: inline;
 }
-
 
 input[type=number]{
     width: 40px;
 }
 
-#code{
-    width: 160px;
+input[type=text]{
+    width: 120px;
 }
+

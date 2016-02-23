@@ -27,19 +27,33 @@
 		<input type="button" value="Step" onclick="stepe()"/>
 		<input type="button" value="Reset" onclick="reset()"/>
 		<br/>
-		<span id="tmInfos">-</span>
+		<span id="tmInfos">...</span>
 	</section>
 	
-	<section class="block">
+	<section class="code fblock">
 		<h3>Code</h3>
-		<textarea id="code" name="tapeCode" placeholder="I,A,I,B,>"></textarea>
+		<label for="tmList">Load a program:</label>
 		<select id="tmList" onchange="loadProgram(this.value)">
-    		<option value="null" disabled selected>Load program</option>
+    		<option disabled selected value="null">Select an option</option>
 		</select>
+		<textarea id="code" name="tapeCode" placeholder="I,A,I,B,>"></textarea>
 		<input type="button" value="Compile Code" onclick="compile()"/>
 	</section>
 	
+	<section class="save-load fblock">
+		<h3>Load & Save</h3>
+		<label for="tmListSaved">Load a saved program:</label>
+		<select id="tmListSaved" onchange="loadProgram(this.value)">
+    		<option disabled selected value="null">Select an option</option>
+		</select>
+		<br/>
+		<label for="programName">Program Name:</label>
+		<input type="text" name="programName" name=""/>
+		<input type="button" value="Save" onclick="saveToCookies()"/>
+	</section>
+	
 	<footer></footer>
+	<script src="res/jscookie.min.js"></script>
 	<script src="res/scripts.js"></script>
 </body>
 </html>

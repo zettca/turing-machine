@@ -19,5 +19,12 @@
         "desc": "0000 ~ 111111",
         "tape": "0000011111",
         "code": "I,1,R,1,R\nI,0,0,0,R\n0,0,0,0,R\n0,1,1,1,R\n1,0,R,0,R\n1,1,1,1,R"
+    },
+    {
+        "id": "seq0n1n",
+        "name": "0^n 1^n",
+        "desc": "000 ~ 111",
+        "tape": "000001111",
+        "code": ";StartUp\nI, ,R, ,N\nI,1,R,1,N\nI,0,st0, ,R\n\n;skip through 0s\nst0,0,st0,0,R\nst0,1,st1,1,R\nst0, ,R, ,N\n\n;skip through 1s\nst1,1,st1,1,R\nst1,0,R,0,N\nst1, ,st1x, ,L\n;check match 1\nst1x,1,r0, ,L\nst1x,0,R,0,N\n\n;reset to 1st 0\nr0,1,r0,1,L\nr0,0,r0,0,L\n;clear 1st 0\nr0, ,r0x, ,R\nr0x, ,A, ,N\nr0x,0,st0, ,R\nr0x,1,R,1,N"
     }
 ]
