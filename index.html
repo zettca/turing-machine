@@ -33,11 +33,8 @@
 	<section class="block">
 		<h3>Code</h3>
 		<textarea id="code" name="tapeCode" placeholder="I,A,I,B,>"></textarea>
-		<select onchange="loadProgram(this.value)">
-    		<option value="" disabled selected>Load program</option>
-			<option value="flipHA">Flip HA</option>
-			<option value="altBinary">Alternate Binary</option>
-			<option value="seq000111">0^n 1^n</option>
+		<select id="tmList" onchange="loadProgram(this.value)">
+    		<option value="null" disabled selected>Load program</option>
 		</select>
 		<input type="button" value="Compile Code" onclick="compile()"/>
 	</section>

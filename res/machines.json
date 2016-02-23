@@ -1,0 +1,23 @@
+[
+    {
+        "id": "flipHA",
+        "name": "Flip H&A",
+        "desc": "Changes H>A and A>H",
+        "tape": "HAHAHAHAHAAAA",
+        "code": "I,H,I,A,R\nI,A,I,H,R"
+    },
+    {
+        "id": "altBinary",
+        "name": "Alternate Binaries",
+        "desc": "Checks if values are alternate",
+        "tape": "101010001",
+        "code": "I,0,0,0,R\nI,1,1,1,R\n; last was 0\n0,0,R,0,R\n0,1,1,1,R\n; last was 1\n1,0,0,0,R\n1,1,R,1,R"
+    },    
+    {
+        "id": "seq0n1m",
+        "name": "0^n 1^m",
+        "desc": "0000 ~ 111111",
+        "tape": "0000011111",
+        "code": "I,1,R,1,R\nI,0,0,0,R\n0,0,0,0,R\n0,1,1,1,R\n1,0,R,0,R\n1,1,1,1,R"
+    }
+]

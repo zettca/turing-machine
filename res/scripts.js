@@ -1,8 +1,4 @@
-var programList = {
-    flipHA: ["HAHAHAHAHAAAA", "I,H,I,A,R\nI,A,I,H,R"],
-    altBinary: ["101010001", "I,0,0,0,R\nI,1,1,1,R\n; last was 0\n0,0,R,0,R\n0,1,1,1,R\n; last was 1\n1,0,0,0,R\n1,1,R,1,R"],
-    seq000111: ["0000011111", "I,1,R,1,R\nI,0,0,0,R\n0,0,0,0,R\n0,1,1,1,R\n1,0,R,0,R\n1,1,1,1,R"]
-};
+/* ========== Turing Machine class ========== */
 
 var turingMachine = function(el){
     this.tapeEle = el;
@@ -116,7 +112,7 @@ var turingMachine = function(el){
                 break;
         }
         this.tapeEle.children[this.tapePos-1].classList.add("head");
-        log("At Iteration " + this.iter + ", State " + this.state + ", Position " + this.tapePos);
+        log("@ Iteration " + this.iter + ", State " + this.state + ", Position " + this.tapePos);
         return true;
     };
     
@@ -127,7 +123,33 @@ var turingMachine = function(el){
     };
 };
 
-/* ==================== */
+/* ========== Load Select from machines.json ========== */
+
+var programList;
+
+var xhr = new XMLHttpRequest();
+xhr.onreadystatechange = function(){
+    if (xhr.readyState === 4 && xhr.status === 200){
+        programList = JSON.parse(xhr.responseText);
+        fillTMList();
+    }
+};
+
+xhr.open('GET', "res/machines.json");
+xhr.send();
+
+function fillTMList(){
+    var tmList = document.getElementById("tmList");
+    for (var i=0; i<programList.length; i++){
+        var opt = document.createElement("option");
+        opt.value = programList[i].id;
+        opt.innerHTML = programList[i].name;
+        tmList.appendChild(opt);
+    }
+}
+
+
+/* ========== Main stuff | Input functions ========== */
 
 var tape = document.getElementById("tape");
 var code = document.getElementById("code");
@@ -140,11 +162,14 @@ tm.setTape("HELLO WORLD");
 
 
 function loadProgram(val){
-    if (!programList[val]) return;
-    
-    text.value = programList[val][0];
-    code.value = programList[val][1];
-    reset();
+    for (var i=0; i<programList.length; i++){
+        if (programList[i].id == val){
+            text.value = programList[i].tape;
+            code.value = programList[i].code;
+            reset();
+            break;
+        }
+    }
 }
 
 function load(){
@@ -209,7 +234,7 @@ function compile(){
 }
 
 
-/* ==================== */
+/* ========== EventListeners ========== */
 
 text.onkeypress = function(e){
   if (e.keyCode == 13){ // Enter
@@ -251,7 +276,7 @@ tape.addEventListener("touchstart", onDown);
 tape.addEventListener("touchmove", onDrag);
 tape.addEventListener("touchend", onUp);
 
-/* ==================== */
+/* ========== Aux functions ========== */
 
 function log(msg){
     console.log(msg);
