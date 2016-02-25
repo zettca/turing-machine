@@ -1,6 +1,4 @@
-
-
-/* ========== Load Select from machines.json ========== */
+/* ========== Load Selects ========== */
 
 var programList, programListSaved;
 
@@ -29,10 +27,10 @@ function fillTMList(){
 function fillTMCookieList(){
     var tmCookieeList = document.getElementById("tmListSaved");
     clearSelect(tmCookieeList);
-    var tms;
     programListSaved = [];
+    var tms;
     try{
-        tms = JSON.parse(Cookies.get("tms") || "[]");
+        tms = JSON.parse(Cookies.get("tms"));
     } catch (e){
         console.log("Error JSON-parsing " + Cookies.get("tms"));
         return;
@@ -61,7 +59,6 @@ var progName = document.getElementsByName("programName")[0];
 var tm = new turingMachine(tape);
 tm.setTape("HELLO WORLD");
 
-
 function loadProgram(val){
     var programs = programList.concat(programListSaved);
     for (var i=0; i<programs.length; i++){
@@ -74,24 +71,29 @@ function loadProgram(val){
     }
 }
 
-function load(){
-    tm.setTape(text.value);
+function run(){
+    while (tm.canRun){
+        stepe();
+    }
 }
 
-function run(){
-    tm.compute(100);
-    label.innerHTML = tm.msg;
+function runDelay(){
+    stepe();
+    if (tm.canRun) setTimeout(runDelay, 300);
 }
 
 function stepe(){
+    tape.children[tm.headPos-1].classList.remove("head");
     tm.execTransition();
     label.innerHTML = tm.msg;
+    tape.children[tm.headPos-1].classList.add("head");
 }
 
 function reset(){
     tm.restart();
-    load();
+    tm.setTape(text.value);
     compile();
+    tape.children[tm.headPos-1].classList.add("head");
     tape.style.left = 0 + "px";
     label.innerHTML = tm.msg;
 }
@@ -126,7 +128,7 @@ function compile(){
     
     if (!err){
         log("Program compiled successfully.");
-        tm.tapeEle.children[tm.tapePos-1].classList.add("head");
+        tm.tapeEle.children[tm.headPos-1].classList.add("head");
         return true;
     } else{
         log("Error compiling program...");
@@ -174,7 +176,7 @@ function saveToCookies(){
 
 text.onkeypress = function(e){
   if (e.keyCode == 13){ // Enter
-    load();
+    tm.setTape(text.value);
     this.blur();
   }
 };

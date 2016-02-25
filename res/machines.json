@@ -33,5 +33,12 @@
         "desc": "000 ~ 111 less code, slower",
         "tape": "000001111",
         "code": "I, ,R, ,N\nI,1,R,1,N\nI,0,f, ,R\n\n; go finish\nf,0,f,0,R\nf,1,f,1,R\nf, ,f0, ,L\nf0,1,f1, ,L\nf1, ,A, ,N\nf1,0,R,0,N\nf1,1,s,1,L\n\n; go back\ns,1,s,1,L\ns,0,s,0,L\ns, ,I, ,R"
+    },
+    {
+        "id": "binaryAdd1",
+        "name": "Binary +1",
+        "desc": "Adds 1 to binary number...",
+        "tape": "11111111",
+        "code": "I,0,0,#,R\nI,1,1,#,R\n;shift 1\n0,0,0,0,R\n0,1,1,0,R\n0, ,s,0,N\n1,0,0,1,R\n1,1,1,1,R\n1, ,s,1,N\n; sum/carry\ns, ,s, ,L\ns,0,b,1,L\ns,1,c,0,L\nc,1,c,0,L\nc,0,b,1,L\nc,#,o,#,R\n; go back\nb,0,b,0,L\nb,1,b,1,L\nb,#,A,#,R\n; overflow\no,0,o0,1,R\no, ,b,0,R\no0,0,o0,0,R\no0, ,b,0,L"
     }
 ]

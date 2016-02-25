@@ -1,23 +1,41 @@
 var turingMachine = function(el){
     this.tapeEle = el;
-    this.tapeCellNum = 200;
-    this.tapeWord = "";
-    this.tapePos = 1;
     this.nullChar = " ";
-    this.state = "I";
-    this.iter = 1;
-    this.trans = {};
-    this.msg = "";
-    
+    this.stateInit = "I";
+    this.stateAbort = "X";
+    this.stateAccept = "A";
+    this.stateReject = "R";
+
     this.restart = function(){
-        this.tapeCellNum = 200;
+        this.canRun = true;
+        
+        this.tapeCellNum = 100;
         this.tapeWord = "";
-        this.tapePos = 1;
-        this.nullChar = " ";
-        this.state = "I";
+        this.headPos = 1;
+        this.state = this.stateInit;
+        this.trans = {};
         this.iter = 1;
-        this.clearTransitions();
         this.msg = "";
+    };
+    
+    this.restart();
+    
+    this.setState = function(st){
+        this.state = st;
+        if (this.state == this.stateAbort || 
+            this.state == this.stateAccept ||
+            this.state == this.stateReject){
+            this.canRun = false;
+            this.msg = "Program finished with Abort";
+        }
+    };
+    
+    this.addHeadPos = function(i){
+        this.headPos = this.headPos+i;
+        if (this.headPos < 1 || this.headPos > this.tapeCellNum){
+            this.canRun = false;
+            this.setState(this.stateAbort);
+        }
     };
     
     this.clearTape = function(){
@@ -28,17 +46,15 @@ var turingMachine = function(el){
     };
     
     this.getSymbol = function(){
-        return this.tapeWord[this.tapePos-1] || this.nullChar;
+        return this.tapeWord[this.headPos-1] || this.nullChar;
     };
     
     this.setSymbol = function(symbol, i){
         function replaceAt(str, i, c){
             return str.substr(0, i) + c + str.substr(i+c.length);
         }
-        if (i && symbol.length == 1){
-            this.tapeWord = replaceAt(this.tapeWord, i-1, symbol);
-            this.tapeEle.children[i-1].innerHTML = symbol;
-        }
+        this.tapeWord = replaceAt(this.tapeWord, i-1, symbol);
+        this.tapeEle.children[i-1].innerHTML = symbol;
     };
     
     this.setTape = function(str){
@@ -49,12 +65,10 @@ var turingMachine = function(el){
         for (var i=0; i<this.tapeCellNum; i++){
             var cell = document.createElement("div");
             cell.classList.add("cell");
-            cell.innerHTML = this.tapeWord[i] ? this.tapeWord[i] : " ";
+            cell.innerHTML = this.tapeWord[i] ? this.tapeWord[i] : this.nullChar;
             cell.setAttribute("index", (this.tapeWord[i]) ? i+1 : "");
             this.tapeEle.appendChild(cell);
         }
-        
-        this.tapeEle.children[this.tapePos-1].classList.add("head");
     };
     
     this.clearTransitions = function(){
@@ -62,68 +76,52 @@ var turingMachine = function(el){
     };
     
     this.pushTransition = function(cs, csR, ns, csW, dir){
-        if (!this.trans[cs]){
-            this.trans[cs] = [];
-        }
-        this.trans[cs].push({r: csR, ns: ns, w: csW, d: dir});
+        if (!this.trans[cs]) this.trans[cs] = {};
+        this.trans[cs][csR] = {s: ns, w: csW, d: dir};
     };
     
     this.execTransition = function(){
-        var stateTrans = this.trans[this.state];
+        if (this.iter >= 1000) this.canRun = false;
+        if (!this.canRun) return;
+        var tranState = this.trans[this.state][this.getSymbol()];
         
-        if (!stateTrans){
-            this.msg = "No possible transitions. Stopping permanently.";
-            return false;
-        }
-        
-        
-        var j = -1;
-        
-        for (var i=0; i<stateTrans.length; i++){
-            if (stateTrans[i].r == this.getSymbol()){
-                j = i;
-                break;
-            }
-        }
-        
-        if (j==-1){
-            this.msg = "No transition found. Stopping permanently.";
-            return false;
+        if (!tranState){
+            this.setState(this.stateAbort);
+            this.msg = "No possible transitions. Aborting.";
+            return;
         }
         
         this.iter++;
-        this.tapeEle.children[this.tapePos-1].classList.remove("head");
-        //this.msg = "Transition matched. Actually doing stuff...";
-        this.setSymbol(stateTrans[j].w, this.tapePos);
-        this.state = stateTrans[j].ns;
-        switch (this.state){
-            case 'A':
-                this.msg = "Program finished with Accept";
-                return false;
-            case 'R':
-                this.msg = "Program finished with Reject";
-                return false;
-        }
-        switch (stateTrans[j].d){
+        this.setSymbol(tranState.w, this.headPos);
+        this.setState(tranState.s);
+        
+        switch (tranState.d){
             case 'L':
             case '<':
-                this.tapePos = this.tapePos-1 || 1;
+                this.addHeadPos(-1);
                 break;
             case 'R':
             case '>':
-                this.tapePos++;
+                this.addHeadPos(1);
                 break;
             case 'N':
+            case 'S':
+            case '-':
                 break;
         }
-        this.tapeEle.children[this.tapePos-1].classList.add("head");
-        this.msg = "@ Iteration " + this.iter + ", State " + this.state + ", Position " + this.tapePos;
-        return true;
+        
+        switch (this.state){
+            case 'A':
+                this.setState(this.stateAccept);
+                this.msg = "Program finished with Accept";
+                return;
+            case 'R':
+                this.setState(this.stateReject);
+                this.msg = "Program finished with Reject";
+                return;
+        }
+
+        this.msg = "@ Iteration " + this.iter + ", State " + this.state + ", Position " + this.headPos;
     };
     
-    this.compute = function(limit){
-        if (limit && this.execTransition()){
-            setTimeout(this.compute(limit--), 1000);
-        }
-    };
 };
