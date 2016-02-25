@@ -57,7 +57,6 @@ var code = document.getElementById("code");
 var label = document.getElementById("tmInfos");
 var text = document.getElementsByName("tapeText")[0];
 var progName = document.getElementsByName("programName")[0];
-var startPos = document.getElementsByName("tapeStart")[0];
 
 var tm = new turingMachine(tape);
 tm.setTape("HELLO WORLD");
@@ -76,7 +75,7 @@ function loadProgram(val){
 }
 
 function load(){
-    tm.setTape(text.value, startPos.value);
+    tm.setTape(text.value);
 }
 
 function run(){
@@ -149,9 +148,9 @@ function saveToCookies(){
     } else{
         var tms;
         try{
-            tms = JSON.parse(Cookies.get("tms")) || [];
+            tms = JSON.parse(Cookies.get("tms"));
         } catch (e){
-            console.log("sighfuck");
+            tms = [];
         }
         var tm = {};
         tm.id = progName.value;

@@ -41,10 +41,10 @@ var turingMachine = function(el){
         }
     };
     
-    this.setTape = function(str, k){
+    this.setTape = function(str){
         this.msg = "Loading to Tape: " + str;
         this.clearTape();
-        this.tapeWord = " ".repeat(k-1 || 0) + str;
+        this.tapeWord = str;
 
         for (var i=0; i<this.tapeCellNum; i++){
             var cell = document.createElement("div");
