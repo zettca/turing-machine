@@ -1,132 +1,4 @@
-String.prototype.replaceAt = function(i, c){
-    return this.substr(0, i) + c + this.substr(i+c.length);
-};
 
-/* ========== Turing Machine class ========== */
-
-var turingMachine = function(el){
-    this.tapeEle = el;
-    this.tapeWord = "";
-    this.tapeCellNum = 200;
-    this.tapePos = 1;
-    this.nullChar = " ";
-    this.state = "I";
-    this.iter = 1;
-    this.trans = {};
-    
-    this.restart = function(){
-        this.tapeWord = "";
-        this.tapeCellNum = 200;
-        this.tapePos = 1;
-        this.state = "I";
-        this.iter = 1;
-        this.clearTransitions();
-    };
-    
-    this.clearTape = function(){
-        this.tapeWord = "";
-        while (this.tapeEle.firstChild){
-            this.tapeEle.removeChild(this.tapeEle.firstChild);
-        }
-    };
-    
-    this.getSymbol = function(){
-        return this.tapeWord[this.tapePos-1] || this.nullChar;
-    };
-    
-    this.setSymbol = function(symbol, i){
-        if (i && symbol.length == 1){
-            this.tapeWord = this.tapeWord.replaceAt(i-1, symbol);
-            this.tapeEle.children[i-1].innerHTML = symbol;
-        }
-    };
-    
-    this.setTape = function(str, k){
-        log("Loading to Tape: " + str);
-        this.clearTape();
-        this.tapeWord = " ".repeat(k-1 || 0) + str;
-
-        for (var i=0; i<this.tapeCellNum; i++){
-            var cell = document.createElement("div");
-            cell.classList.add("cell");
-            cell.innerHTML = this.tapeWord[i] ? this.tapeWord[i] : " ";
-            cell.setAttribute("index", (this.tapeWord[i]) ? i+1 : "");
-            this.tapeEle.appendChild(cell);
-        }
-        
-        this.tapeEle.children[this.tapePos-1].classList.add("head");
-    };
-    
-    this.clearTransitions = function(){
-        this.trans = {};
-    };
-    
-    this.pushTransition = function(cs, csR, ns, csW, dir){
-        if (!this.trans[cs]){
-            this.trans[cs] = [];
-        }
-        this.trans[cs].push({r: csR, ns: ns, w: csW, d: dir});
-    };
-    
-    this.execTransition = function(){
-        var stateTrans = this.trans[this.state];
-        
-        if (!stateTrans){
-            log("No possible transitions. Stopping permanently.");
-            return false;
-        }
-        
-        
-        var j = -1;
-        
-        for (var i=0; i<stateTrans.length; i++){
-            if (stateTrans[i].r == this.getSymbol()){
-                j = i;
-                break;
-            }
-        }
-        
-        if (j==-1){
-            log("No transition found. Stopping permanently.");
-            return false;
-        }
-        
-        this.iter++;
-        this.tapeEle.children[this.tapePos-1].classList.remove("head");
-        //log("Transition matched. Actually doing stuff...");
-        this.setSymbol(stateTrans[j].w, this.tapePos);
-        this.state = stateTrans[j].ns;
-        switch (this.state){
-            case 'A':
-                log("Program finished with Accept");
-                return false;
-            case 'R':
-                log("Program finished with Reject");
-                return false;
-        }
-        switch (stateTrans[j].d){
-            case 'L':
-            case '<':
-                this.tapePos = this.tapePos-1 || 1;
-                break;
-            case 'R':
-            case '>':
-                this.tapePos++;
-                break;
-            case 'N':
-                break;
-        }
-        this.tapeEle.children[this.tapePos-1].classList.add("head");
-        log("@ Iteration " + this.iter + ", State " + this.state + ", Position " + this.tapePos);
-        return true;
-    };
-    
-    this.compute = function(limit){
-        if (limit && this.execTransition()){
-            setTimeout(this.compute(limit--), 1000);
-        }
-    };
-};
 
 /* ========== Load Select from machines.json ========== */
 
@@ -209,11 +81,12 @@ function load(){
 
 function run(){
     tm.compute(100);
+    label.innerHTML = tm.msg;
 }
 
 function stepe(){
     tm.execTransition();
-    //label.innerHTML = "Iteration "+tm.iter+" State "+tm.state+" Position "+tm.tapePos;
+    label.innerHTML = tm.msg;
 }
 
 function reset(){
@@ -221,6 +94,7 @@ function reset(){
     load();
     compile();
     tape.style.left = 0 + "px";
+    label.innerHTML = tm.msg;
 }
 
 function compile(){
