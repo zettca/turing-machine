@@ -20,7 +20,7 @@
 	<section>
 		<h3>Controls</h3>
 		<input type="text" name="tapeText"/>
-		<input type="button" value="Load" onclick="load()"/>
+		<input type="button" value="Load" onclick="loadTape()"/>
 		<br/>
 		<input type="button" value="Run" onclick="run()"/>
 		<input type="button" value="Step" onclick="stepe()"/>
@@ -49,6 +49,11 @@
 		<label for="programName">Program Name:</label>
 		<input type="text" name="programName" name=""/>
 		<input type="button" value="Save" onclick="saveToCookies()"/>
+	</section>
+	
+	<section class="fblock">
+		<h3>Transitions Table</h3>
+		<table id="tableTrans"></table>
 	</section>
 	
 	<footer></footer>

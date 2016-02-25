@@ -1,6 +1,6 @@
 var turingMachine = function(el){
     this.tapeEle = el;
-    this.nullChar = " ";
+    this.emptyChar = " ";
     this.stateInit = "I";
     this.stateAbort = "X";
     this.stateAccept = "A";
@@ -46,7 +46,7 @@ var turingMachine = function(el){
     };
     
     this.getSymbol = function(){
-        return this.tapeWord[this.headPos-1] || this.nullChar;
+        return this.tapeWord[this.headPos-1] || this.emptyChar;
     };
     
     this.setSymbol = function(symbol, i){
@@ -65,7 +65,7 @@ var turingMachine = function(el){
         for (var i=0; i<this.tapeCellNum; i++){
             var cell = document.createElement("div");
             cell.classList.add("cell");
-            cell.innerHTML = this.tapeWord[i] ? this.tapeWord[i] : this.nullChar;
+            cell.innerHTML = this.tapeWord[i] ? this.tapeWord[i] : this.emptyChar;
             cell.setAttribute("index", (this.tapeWord[i]) ? i+1 : "");
             this.tapeEle.appendChild(cell);
         }

@@ -71,6 +71,10 @@ function loadProgram(val){
     }
 }
 
+function loadTape(){
+    tm.setTape(text.value);
+}
+
 function run(){
     while (tm.canRun){
         stepe();
@@ -91,7 +95,7 @@ function stepe(){
 
 function reset(){
     tm.restart();
-    tm.setTape(text.value);
+    loadTape();
     compile();
     tape.children[tm.headPos-1].classList.add("head");
     tape.style.left = 0 + "px";
@@ -129,12 +133,52 @@ function compile(){
     if (!err){
         log("Program compiled successfully.");
         tm.tapeEle.children[tm.headPos-1].classList.add("head");
+        fillTable();
         return true;
     } else{
         log("Error compiling program...");
         log("Line " + (i+1) + ": " + err);
         tm.clearTransitions();
         return false;
+    }
+    
+}
+
+function fillTable(){
+    var table = document.getElementById("tableTrans");
+    var trans = tm.trans;
+    var word = tm.tapeWord;
+    while(table.rows.length > 0) table.deleteRow(0);
+    
+    var reads = [/*tm.emptyChar*/];
+    for (var c of word){  // from tape chars
+        if (reads.indexOf(c) == -1) reads.push(c);
+    }
+    for (var st in trans){  // from transition code
+        Object.keys(trans[st]).forEach(function(key){
+            if (reads.indexOf(key) == -1) reads.push(key);
+        });
+    }
+    
+    
+    var tr = table.insertRow(0);
+    var td = tr.insertCell(0);
+    td.innerHTML = "&nbsp;";
+    for (var read of reads){
+        td = tr.insertCell();
+        td.innerHTML = read;
+    }
+
+    for (var st in trans){
+        tr = table.insertRow();
+        td = tr.insertCell();
+        td.innerHTML = st;
+        
+        for (var r of reads){
+            var t = trans[st][r];
+            td = tr.insertCell();
+            td.innerHTML = t ? t.s+" <b>"+t.w+"</b> "+t.d : "&#10008;";
+        }
     }
 }
 
@@ -176,7 +220,7 @@ function saveToCookies(){
 
 text.onkeypress = function(e){
   if (e.keyCode == 13){ // Enter
-    tm.setTape(text.value);
+    loadTape();
     this.blur();
   }
 };
