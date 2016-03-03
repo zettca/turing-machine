@@ -1,4 +1,4 @@
-var turingMachine = function(el){
+var TuringMachine = function(el){
     this.tapeEle = el;
     this.emptyChar = " ";
     this.stateInit = "I";
@@ -8,33 +8,70 @@ var turingMachine = function(el){
 
     this.restart = function(){
         this.canRun = true;
-        
         this.tapeCellNum = 100;
         this.tapeWord = "";
         this.headPos = 1;
         this.state = this.stateInit;
         this.trans = {};
-        this.iter = 1;
+        this.iters = 1;
         this.msg = "";
     };
     
     this.restart();
     
-    this.setState = function(st){
-        this.state = st;
-        if (this.state == this.stateAbort || 
-            this.state == this.stateAccept ||
-            this.state == this.stateReject){
+    this.setMsg = function(msg){
+        this.msg = msg;
+        console.log(msg);
+    };
+    
+    this.iter = function(){
+        this.iters++;
+        if (this.iters > 1000){
             this.canRun = false;
-            this.msg = "Program finished with Abort";
         }
     };
     
-    this.addHeadPos = function(i){
+    this.setState = function(st){
+        this.state = st;
+        switch (this.state){
+            case this.stateAbort:
+                this.canRun = false;
+                this.setMsg("Machine Aborted!");
+                break;
+            case this.stateAccept:
+                this.canRun = false;
+                this.setMsg("Machine finished with Accept state.");
+                break;
+            case this.stateReject:
+                this.canRun = false;
+                this.setMsg("Machine finished with Reject state.");
+                break;
+            default:
+                this.setMsg("@ Iteration " + this.iters + ", State " + this.state + ", Position " + this.headPos);
+                break;
+        }
+    };
+    
+    this.incHeadPos = function(i){
         this.headPos = this.headPos+i;
-        if (this.headPos < 1 || this.headPos > this.tapeCellNum){
-            this.canRun = false;
-            this.setState(this.stateAbort);
+    };
+    
+    this.moveHead = function(dir){
+        switch (dir){
+            case 'L':
+            case '<':
+                this.incHeadPos(-1);
+                break;
+            case 'R':
+            case '>':
+                this.incHeadPos(1);
+                break;
+            case 'N':
+            case 'S':
+            case '-':
+            default:
+                this.incHeadPos(0);
+                break;
         }
     };
     
@@ -45,11 +82,11 @@ var turingMachine = function(el){
         }
     };
     
-    this.getSymbol = function(){
+    this.readSymbol = function(){
         return this.tapeWord[this.headPos-1] || this.emptyChar;
     };
     
-    this.setSymbol = function(symbol, i){
+    this.writeSymbol = function(symbol, i){
         function replaceAt(str, i, c){
             return str.substr(0, i) + c + str.substr(i+c.length);
         }
@@ -58,7 +95,7 @@ var turingMachine = function(el){
     };
     
     this.setTape = function(str){
-        this.msg = "Loading to Tape: " + str;
+        this.setMsg("Loading to Tape: " + str);
         this.clearTape();
         this.tapeWord = str;
 
@@ -80,48 +117,31 @@ var turingMachine = function(el){
         this.trans[cs][csR] = {s: ns, w: csW, d: dir};
     };
     
-    this.execTransition = function(){
-        if (this.iter >= 1000) this.canRun = false;
+    
+    this.execTransition = function(newState, writeSymb, dir){
+        this.iter();
+        this.writeSymbol(writeSymb, this.headPos);
+        this.moveHead(dir);
+        this.setState(newState);
+    };
+    
+    this.stepTransition = function(){
         if (!this.canRun) return;
-        var tranState = this.trans[this.state][this.getSymbol()];
+        var tranState = this.trans[this.state][this.readSymbol()];
         
-        if (!tranState){
+        if (this.headPos < 1 || this.headPos > this.tapeCellNum){
             this.setState(this.stateAbort);
-            this.msg = "No possible transitions. Aborting.";
+            this.setMsg("Maching aborted. Head out of bounds!");
             return;
         }
         
-        this.iter++;
-        this.setSymbol(tranState.w, this.headPos);
-        this.setState(tranState.s);
-        
-        switch (tranState.d){
-            case 'L':
-            case '<':
-                this.addHeadPos(-1);
-                break;
-            case 'R':
-            case '>':
-                this.addHeadPos(1);
-                break;
-            case 'N':
-            case 'S':
-            case '-':
-                break;
+        if (!tranState){
+            this.setState(this.stateAbort);
+            this.setMsg("Maching aborted. No transition state!");
+            return;
         }
         
-        switch (this.state){
-            case 'A':
-                this.setState(this.stateAccept);
-                this.msg = "Program finished with Accept";
-                return;
-            case 'R':
-                this.setState(this.stateReject);
-                this.msg = "Program finished with Reject";
-                return;
-        }
-
-        this.msg = "@ Iteration " + this.iter + ", State " + this.state + ", Position " + this.headPos;
+        this.execTransition(tranState.s, tranState.w, tranState.d);
     };
     
 };

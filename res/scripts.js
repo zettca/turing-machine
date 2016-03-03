@@ -52,12 +52,12 @@ fillTMCookieList();
 
 var tape = document.getElementById("tape");
 var code = document.getElementById("code");
-var label = document.getElementById("tmInfos");
+var label = document.getElementById("tmState");
 var text = document.getElementsByName("tapeText")[0];
 var progName = document.getElementsByName("programName")[0];
 
-var tm = new turingMachine(tape);
-tm.setTape("HELLO WORLD");
+var tm = new TuringMachine(tape);
+tm.setTape("000111");
 
 function loadProgram(val){
     var programs = programList.concat(programListSaved);
@@ -88,7 +88,7 @@ function runDelay(){
 
 function stepe(){
     tape.children[tm.headPos-1].classList.remove("head");
-    tm.execTransition();
+    tm.stepTransition();
     label.innerHTML = tm.msg;
     tape.children[tm.headPos-1].classList.add("head");
 }
@@ -148,17 +148,20 @@ function fillTable(){
     var table = document.getElementById("tableTrans");
     var trans = tm.trans;
     var word = tm.tapeWord;
+    var isDec = true;
     while(table.rows.length > 0) table.deleteRow(0);
     
     var reads = [/*tm.emptyChar*/];
     for (var c of word){  // from tape chars
         if (reads.indexOf(c) == -1) reads.push(c);
     }
-    for (var st in trans){  // from transition code
+    /*for (var st in trans){  // from transition code
         Object.keys(trans[st]).forEach(function(key){
             if (reads.indexOf(key) == -1) reads.push(key);
         });
-    }
+    }*/
+    
+    if (reads.length<=2) reads.push(tm.emptyChar);
     
     
     var tr = table.insertRow(0);
@@ -166,7 +169,7 @@ function fillTable(){
     td.innerHTML = "&nbsp;";
     for (var read of reads){
         td = tr.insertCell();
-        td.innerHTML = read;
+        td.innerHTML = read == " " ? "&#9633;" : read;
     }
 
     for (var st in trans){
@@ -177,9 +180,26 @@ function fillTable(){
         for (var r of reads){
             var t = trans[st][r];
             td = tr.insertCell();
-            td.innerHTML = t ? t.s+" <b>"+t.w+"</b> "+t.d : "&#10008;";
+            if (t){
+                var w = (t.w == " ") ? "&#9633;" : t.w;
+                td.innerHTML = t.s+" <b>"+w+"</b> "+t.d;
+                if (t.s == tm.stateAccept){
+                    td.style.backgroundColor = "#CFC";
+                } else if (t.s == tm.stateReject){
+                    td.style.backgroundColor = "#FCC";
+                }
+            } else{
+                td.innerHTML = "&#10008;";
+                if (r != tm.emptyChar) isDec = false;
+                td.style.backgroundColor = "#FFC";
+            }
         }
     }
+    
+    var infos = document.getElementById("tmInfo");
+    var wat = (isDec) ? "" : "not";
+    infos.innerHTML = "Machine is <b>"+wat+"</b> decidible";
+
 }
 
 function saveToCookies(){
