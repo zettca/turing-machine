@@ -65,7 +65,7 @@ table tr:first-child, table td:first-child{
 .cell{
     margin: 0;
     width: 32px;
-    padding: 8px 10px;
+    padding: 8px;
     text-align: center;
 	background-color: #EEE;
 	
@@ -110,6 +110,7 @@ table tr:first-child, table td:first-child{
 .code textarea{
     margin: 2px 0;
     resize: none;
+    width: 150px;
     height: 160px;
     font-family: monospace;
     border: 1px solid silver;

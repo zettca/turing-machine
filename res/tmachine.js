@@ -40,11 +40,11 @@ var TuringMachine = function(el){
                 break;
             case this.stateAccept:
                 this.canRun = false;
-                this.setMsg("Machine finished with Accept state.");
+                this.setMsg("Machine finished in "+this.iters+" iterations with Accept state.");
                 break;
             case this.stateReject:
                 this.canRun = false;
-                this.setMsg("Machine finished with Reject state.");
+                this.setMsg("Machine finished in "+this.iters+" iterations with Reject state.");
                 break;
             default:
                 this.setMsg("@ Iteration " + this.iters + ", State " + this.state + ", Position " + this.headPos);
@@ -92,6 +92,7 @@ var TuringMachine = function(el){
         }
         this.tapeWord = replaceAt(this.tapeWord, i-1, symbol);
         this.tapeEle.children[i-1].innerHTML = symbol;
+        this.tapeEle.children[i-1].setAttribute("index", i);
     };
     
     this.setTape = function(str){

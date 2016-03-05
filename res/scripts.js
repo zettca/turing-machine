@@ -10,7 +10,7 @@ xhr.onreadystatechange = function(){
     }
 };
 
-xhr.open('GET', "res/machines.json");
+xhr.open("GET", "res/machines.json");
 xhr.send();
 
 function fillTMList(){
@@ -230,6 +230,7 @@ function saveToCookies(){
         var days = 90;
         d.setTime(d.getTime() + (days*24*60*60*1000));
         
+        progName.value = "";
         Cookies.set('tms', JSON.stringify(tms), { expires: 90 });
         fillTMCookieList();
     }
