@@ -122,8 +122,8 @@ function compile(){
         } else if (!isSymb(args[1]) || !isSymb(args[3])){
             err = "symbols must be single characters.";
             break;
-        } else if (!args[4] || "LRN<|>".indexOf(args[4]) == -1){
-            err = "transition must be either LRN or <>|.";
+        } else if (!args[4] || "LRNS<|>".indexOf(args[4]) == -1){
+            err = "transition must be either LRNS or <>|.";
             break;
         } else{ // no errors in line, wee
             tm.pushTransition(args[0], args[1], args[2], args[3], args[4]);
