@@ -31,7 +31,7 @@
 		<h3>Code</h3>
 		<label for="tmList">Load a program:</label>
 		<select id="tmList" onchange="loadProgram(this.value)">
-    		<option disabled selected value="null">Select an option</option>
+			<option disabled selected value="null">Select an option</option>
 		</select>
 		<textarea id="code" name="tapeCode" placeholder="I,A,I,B,>"></textarea>
 		<input type="button" value="Compile Code" onclick="compile()"/>
@@ -41,7 +41,7 @@
 		<h3>Load & Save</h3>
 		<label for="tmListSaved">Load a saved program:</label>
 		<select id="tmListSaved" onchange="loadProgram(this.value)">
-    		<option disabled selected value="null">Select an option</option>
+			<option disabled selected value="null">Select an option</option>
 		</select>
 		<br/>
 		<label for="programName">Save current program:</label>
@@ -55,9 +55,18 @@
 		<span id="tmInfo"></span>
 	</section>
 	
+	<section class="fblock">
+		<h3>Graph Representation</h3>
+		<div id="canvas"></div>
+	</section>
+	
 	<footer></footer>
 	<script src="res/jscookie.min.js"></script>
 	<script src="res/tmachine.js"></script>
 	<script src="res/scripts.js"></script>
+	<script type="text/javascript" src="res/jquery-1.4.2.min.js"></script>
+	<script type="text/javascript" src="res/raphael.min.js"></script>
+	<script type="text/javascript" src="res/dracula_graffle.js"></script>
+	<script type="text/javascript" src="res/dracula_graph.js"></script>
 </body>
 </html>

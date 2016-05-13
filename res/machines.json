@@ -1,65 +1,67 @@
-[
-    {
+{
+  "machines": [
+      {
         "id": "flipHA",
         "name": "Flip H&A",
         "desc": "Changes H>A and A>H",
         "tape": "HAHAHAHAAA",
         "code": "I,H,I,A,R\nI,A,I,H,R"
-    },
-    {
+      },
+      {
         "id": "flippedBinary",
         "name": "Flipped Binary?",
         "desc": "Checks if values are alternate",
         "tape": "101010001",
         "code": "I,0,0,0,R\nI,1,1,1,R\n0,0,R,0,N\n0,1,1,1,R\n1,0,0,0,R\n1,1,R,1,N"
-    },    
-    {
+      },    
+      {
         "id": "seq0n1m",
         "name": "0^n 1^m",
         "desc": "0000 ~ 111111",
         "tape": "0000011111",
         "code": "I,1,R,1,R\nI,0,0,0,R\n0,0,0,0,R\n0,1,1,1,R\n1,0,R,0,R\n1,1,1,1,R"
-    },
-    {
+      },
+      {
         "id": "seq0n1n",
         "name": "0^n 1^n",
         "desc": "000 ~ 111",
         "tape": "000001111",
         "code": ";StartUp\nI, ,R, ,N\nI,1,R,1,N\nI,0,st0, ,R\n\n;skip through 0s\nst0,0,st0,0,R\nst0,1,st1,1,R\nst0, ,R, ,N\n\n;skip through 1s\nst1,1,st1,1,R\nst1,0,R,0,N\nst1, ,st1x, ,L\n;check match 1\nst1x,1,r0, ,L\nst1x,0,R,0,N\n\n;reset to 1st 0\nr0,1,r0,1,L\nr0,0,r0,0,L\n;clear 1st 0\nr0, ,r0x, ,R\nr0x, ,A, ,N\nr0x,0,st0, ,R\nr0x,1,R,1,N"
-    },
-    {
+      },
+      {
         "id": "seq0n1n2",
         "name": "0^n 1^n 2",
         "desc": "000 ~ 111 less code, slower",
         "tape": "000001111",
         "code": "I, ,R, ,N\nI,1,R,1,N\nI,0,f, ,R\n\n; go finish\nf,0,f,0,R\nf,1,f,1,R\nf, ,f0, ,L\nf0,1,f1, ,L\nf1, ,A, ,N\nf1,0,R,0,N\nf1,1,s,1,L\n\n; go back\ns,1,s,1,L\ns,0,s,0,L\ns, ,I, ,R"
-    },
-    {
+      },
+      {
         "id": "binaryAdd1",
         "name": "Binary +1",
         "desc": "Adds 1 to binary number...",
         "tape": "11111111",
         "code": "I,0,0,#,R\nI,1,1,#,R\n;shift 1\n0,0,0,0,R\n0,1,1,0,R\n0, ,s,0,N\n1,0,0,1,R\n1,1,1,1,R\n1, ,s,1,N\n; sum/carry\ns, ,s, ,L\ns,0,b,1,L\ns,1,c,0,L\nc,1,c,0,L\nc,0,b,1,L\nc,#,o,#,R\n; go back\nb,0,b,0,L\nb,1,b,1,L\nb,#,A,#,R\n; overflow\no,0,o0,1,R\no, ,b,0,R\no0,0,o0,0,R\no0, ,b,0,L"
-    },
-    {
+      },
+      {
         "id": "binarySub1",
         "name": "Binary -1",
         "desc": "Subtracts 1 to binary number...",
         "tape": "000111100",
         "code": "I,0,I, ,R\nI,1,1,#,R\n;shift 1\n0,0,0,0,R\n0,1,1,0,R\n0, ,s,0,N\n1,0,0,1,R\n1,1,1,1,R\n1, ,s,1,N\n; sub\ns,0,s,1,L\ns,1,b,0,L\n; back\nb,0,b,0,L\nb,1,b,1,L\nb,#,A,#,R"
-    },
-    {
+      },
+      {
         "id": "num0s1s",
         "name": "Num 0s = 1s",
         "desc": "Checks if num 0's = num 1's",
         "tape": "101011001001",
         "code": "I, ,A, ,N\nI,0,S1, ,R\nI,1,S0, ,R\nI,x,I, ,R\n;search\nS0,0,B,x,L\nS0,1,S0,1,R\nS0, ,R, ,N\nS0,x,S0,x,R\nS1,1,B,x,L\nS1,0,S1,0,R\nS1, ,R, ,N\nS1,x,S1,x,R\n;go back\nB,0,B,0,L\nB,1,B,1,L\nB,x,B,x,L\nB, ,I, ,R"
-    },
-    {
+      },
+      {
         "id": "isBinPalindrome",
         "name": "Binary Palindrome?",
         "desc": "Checks if palindrome",
         "tape": "0011100",
         "code": "I, ,A, ,N\nI,0,L0, ,R\nI,1,L1, ,R\nL0, ,0, ,L\nL0,0,L0,0,R\nL0,1,L0,1,R\nL1, ,1, ,L\nL1,0,L1,0,R\nL1,1,L1,1,R\n0, ,A, ,N\n0,0,B, ,L\n0,1,R,1,N\n1, ,A, ,N\n1,0,R,0,N\n1,1,B, ,L\nB,0,B,0,L\nB,1,B,1,L\nB, ,I, ,R"
-    }
-]
+      }
+    ]
+}

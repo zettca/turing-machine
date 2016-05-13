@@ -4,45 +4,46 @@ var programList, programListSaved;
 
 var xhr = new XMLHttpRequest();
 xhr.onreadystatechange = function(){
-    if (xhr.readyState === 4 && xhr.status === 200){
-        programList = JSON.parse(xhr.responseText);
-        fillTMList();
-    }
+	if (xhr.readyState === 4 && xhr.status === 200){
+		var res = JSON.parse(xhr.responseText);
+		programList = res.machines;
+		fillTMList();
+	}
 };
 
 xhr.open("GET", "res/machines.json");
 xhr.send();
 
 function fillTMList(){
-    var tmList = document.getElementById("tmList");
-    clearSelect(tmList);
-    for (var i=0; i<programList.length; i++){
-        var opt = document.createElement("option");
-        opt.value = programList[i].id;
-        opt.innerHTML = programList[i].name;
-        tmList.appendChild(opt);
-    }
+	var tmList = document.getElementById("tmList");
+	clearSelect(tmList);
+	for (var i=0; i<programList.length; i++){
+		var opt = document.createElement("option");
+		opt.value = programList[i].id;
+		opt.innerHTML = programList[i].name;
+		tmList.appendChild(opt);
+	}
 }
 
 function fillTMCookieList(){
-    var tmCookieeList = document.getElementById("tmListSaved");
-    clearSelect(tmCookieeList);
-    programListSaved = [];
-    var tms;
-    try{
-        tms = JSON.parse(Cookies.get("tms"));
-    } catch (e){
-        console.log("Error JSON-parsing " + Cookies.get("tms"));
-        return;
-    }
-    for (var i=0; i<tms.length; i++){
-        programListSaved.push(tms[i]);
-        
-        var opt = document.createElement("option");
-        opt.value = tms[i].id;
-        opt.innerHTML = tms[i].name;
-        tmCookieeList.appendChild(opt);
-    }
+	var tmCookieeList = document.getElementById("tmListSaved");
+	clearSelect(tmCookieeList);
+	programListSaved = [];
+	var tms;
+	try{
+		tms = JSON.parse(Cookies.get("tms"));
+	} catch (e){
+		console.log("Error JSON-parsing " + Cookies.get("tms"));
+		return;
+	}
+	for (var i=0; i<tms.length; i++){
+		programListSaved.push(tms[i]);
+		
+		var opt = document.createElement("option");
+		opt.value = tms[i].id;
+		opt.innerHTML = tms[i].name;
+		tmCookieeList.appendChild(opt);
+	}
 }
 
 fillTMCookieList();
@@ -60,180 +61,204 @@ var tm = new TuringMachine(tape);
 tm.setTape("000111");
 
 function loadProgram(val){
-    var programs = programList.concat(programListSaved);
-    for (var i=0; i<programs.length; i++){
-        if (programs[i].id == val){
-            text.value = programs[i].tape;
-            code.value = decodeURIComponent(programs[i].code);
-            reset();
-            break;
-        }
-    }
+	var programs = programList.concat(programListSaved);
+	for (var i=0; i<programs.length; i++){
+		if (programs[i].id == val){
+			text.value = programs[i].tape;
+			code.value = decodeURIComponent(programs[i].code);
+			reset();
+			break;
+		}
+	}
 }
 
 function loadTape(){
-    tm.setTape(text.value);
+	tm.setTape(text.value);
 }
 
 function run(){
-    while (tm.canRun){
-        stepe();
-    }
+	while (tm.canRun){
+		stepe();
+	}
 }
 
 function runDelay(){
-    stepe();
-    if (tm.canRun) setTimeout(runDelay, 300);
+	stepe();
+	if (tm.canRun) setTimeout(runDelay, 300);
 }
 
 function stepe(){
-    tape.children[tm.headPos-1].classList.remove("head");
-    tm.stepTransition();
-    label.innerHTML = tm.msg;
-    tape.children[tm.headPos-1].classList.add("head");
+	tape.children[tm.headPos-1].classList.remove("head");
+	tm.stepTransition();
+	label.innerHTML = tm.msg;
+	tape.children[tm.headPos-1].classList.add("head");
 }
 
 function reset(){
-    tm.restart();
-    loadTape();
-    compile();
-    tape.children[tm.headPos-1].classList.add("head");
-    tape.style.left = 0 + "px";
-    label.innerHTML = tm.msg;
+	tm.restart();
+	loadTape();
+	compile();
+	tape.children[tm.headPos-1].classList.add("head");
+	tape.style.left = 0 + "px";
+	label.innerHTML = tm.msg;
 }
 
 function compile(){
-    tm.clearTransitions();
-    var err = "";
-    var lines = code.value.split("\n");
-    
-    for (var i=0; i<lines.length; i++){ // check for errors
-        var args = lines[i].split(",");
-        if (!lines[i]){
-            continue;   // empty line
-        } else if (lines[i][0] == ";"){
-            continue;   // comment
-        } else if (args.length != 5){
-            err = "incorrect argument number.";
-            break;
-        } else if (!isState(args[0]) || !isState(args[2])){
-            err = "states must be ints or single characters.";
-            break;
-        } else if (!isSymb(args[1]) || !isSymb(args[3])){
-            err = "symbols must be single characters.";
-            break;
-        } else if (!args[4] || "LRNS<|>".indexOf(args[4]) == -1){
-            err = "transition must be either LRNS or <>|.";
-            break;
-        } else{ // no errors in line, wee
-            tm.pushTransition(args[0], args[1], args[2], args[3], args[4]);
-        }
-    }
-    
-    if (!err){
-        log("Program compiled successfully.");
-        tm.tapeEle.children[tm.headPos-1].classList.add("head");
-        fillTable();
-        return true;
-    } else{
-        log("Error compiling program...");
-        log("Line " + (i+1) + ": " + err);
-        tm.clearTransitions();
-        return false;
-    }
-    
+	tm.clearTransitions();
+	var err = "";
+	var lines = code.value.split("\n");
+	
+	for (var i=0; i<lines.length; i++){ // check for errors
+		var args = lines[i].split(",");
+		if (!lines[i]){
+			continue;   // empty line
+		} else if (lines[i][0] == ";"){
+			continue;   // comment
+		} else if (args.length != 5){
+			err = "incorrect argument number.";
+			break;
+		} else if (!isState(args[0]) || !isState(args[2])){
+			err = "states must be ints or single characters.";
+			break;
+		} else if (!isSymb(args[1]) || !isSymb(args[3])){
+			err = "symbols must be single characters.";
+			break;
+		} else if (!args[4] || "LRNS<|>".indexOf(args[4]) == -1){
+			err = "transition must be either LRNS or <>|.";
+			break;
+		} else{ // no errors in line, wee
+			tm.pushTransition(args[0], args[1], args[2], args[3], args[4]);
+		}
+	}
+	
+	if (!err){
+		log("Program compiled successfully.");
+		tm.tapeEle.children[tm.headPos-1].classList.add("head");
+		fillTable();
+		drawGraph();
+		return true;
+	} else{
+		log("Error compiling program...");
+		log("Line " + (i+1) + ": " + err);
+		tm.clearTransitions();
+		return false;
+	}
+	
 }
 
 function fillTable(){
-    var table = document.getElementById("tableTrans");
-    var trans = tm.trans;
-    var word = tm.tapeWord;
-    var isDec = true;
-    while(table.rows.length > 0) table.deleteRow(0);
-    
-    var reads = [/*tm.emptyChar*/];
-    for (var c of word){  // from tape chars
-        if (reads.indexOf(c) == -1) reads.push(c);
-    }
-    /*for (var st in trans){  // from transition code
-        Object.keys(trans[st]).forEach(function(key){
-            if (reads.indexOf(key) == -1) reads.push(key);
-        });
-    }*/
-    
-    if (reads.length<=2) reads.push(tm.emptyChar);
-    
-    
-    var tr = table.insertRow(0);
-    var td = tr.insertCell(0);
-    td.innerHTML = "&nbsp;";
-    for (var read of reads){
-        td = tr.insertCell();
-        td.innerHTML = read == " " ? "&#9633;" : read;
-    }
+	var table = document.getElementById("tableTrans");
+	var trans = tm.trans;
+	var word = tm.tapeWord;
+	var isDec = true;
+	while(table.rows.length > 0) table.deleteRow(0);
+	
+	var reads = [/*tm.emptyChar*/];
+	for (var c of word){  // from tape chars
+		if (reads.indexOf(c) == -1) reads.push(c);
+	}
+	/*for (var st in trans){  // from transition code
+		Object.keys(trans[st]).forEach(function(key){
+			if (reads.indexOf(key) == -1) reads.push(key);
+		});
+	}*/
+	
+	if (reads.length<=2) reads.push(tm.emptyChar);
+	
+	
+	var tr = table.insertRow(0);
+	var td = tr.insertCell(0);
+	td.innerHTML = "&nbsp;";
+	for (var read of reads){
+		td = tr.insertCell();
+		td.innerHTML = read == " " ? "&#9633;" : read;
+	}
 
-    for (var st in trans){
-        tr = table.insertRow();
-        td = tr.insertCell();
-        td.innerHTML = st;
-        
-        for (var r of reads){
-            var t = trans[st][r];
-            td = tr.insertCell();
-            if (t){
-                var w = (t.w == " ") ? "&#9633;" : t.w;
-                td.innerHTML = t.s+" <b>"+w+"</b> "+t.d;
-                if (t.s == tm.stateAccept){
-                    td.style.backgroundColor = "#CFC";
-                } else if (t.s == tm.stateReject){
-                    td.style.backgroundColor = "#FCC";
-                }
-            } else{
-                td.innerHTML = "&#10008;";
-                if (r != tm.emptyChar) isDec = false;
-                td.style.backgroundColor = "#FFC";
-            }
-        }
-    }
-    
-    var infos = document.getElementById("tmInfo");
-    var wat = (isDec) ? "" : "not";
-    infos.innerHTML = "Machine is <b>"+wat+"</b> decidible";
+	for (var st in trans){
+		tr = table.insertRow();
+		td = tr.insertCell();
+		td.innerHTML = st;
+		
+		for (var r of reads){
+			var t = trans[st][r];
+			td = tr.insertCell();
+			if (t){
+				var w = (t.w == " ") ? "&#9633;" : t.w;
+				td.innerHTML = t.s+" <b>"+w+"</b> "+t.d;
+				if (t.s == tm.stateAccept){
+					td.style.backgroundColor = "#CFC";
+				} else if (t.s == tm.stateReject){
+					td.style.backgroundColor = "#FCC";
+				}
+			} else{
+				td.innerHTML = "&#10008;";
+				if (r != tm.emptyChar) isDec = false;
+				td.style.backgroundColor = "#FFC";
+			}
+		}
+	}
+	
+	var infos = document.getElementById("tmInfo");
+	var wat = (isDec) ? "" : "not";
+	infos.innerHTML = "Machine is <b>"+wat+"</b> decidible";
 
 }
 
+function drawGraph(){
+	var canvas = document.getElementById("canvas");
+	var trans = tm.trans;
+	
+	canvas.innerHTML = "";
+	
+	var g = new Graph();
+	
+	for (var state in trans){
+		for (var read in trans[state]){
+			var t = trans[state][read];
+			console.log(t);
+			g.addEdge(state, t.s, {directed: true, label: read+">"+t.w+","+t.d});
+		}
+	}
+	
+	var layouter = new Graph.Layout.Spring(g);
+	var renderer = new Graph.Renderer.Raphael('canvas', g, 600, 400);
+	
+	layouter.layout();
+	renderer.draw();
+}
+
 function saveToCookies(){
-    if (!compile()){
-        return;
-    } else if (!progName.value){
-        alert("Please give the program a name :)");
-        return;
-    } else if (!code.value && !text.value){
-        alert("Code and Tape are blank!");
-        return;
-    } else{
-        var tms;
-        try{
-            tms = JSON.parse(Cookies.get("tms"));
-        } catch (e){
-            tms = [];
-        }
-        var tm = {};
-        tm.id = progName.value;
-        tm.name = progName.value;
-        tm.desc = "";
-        tm.tape = text.value;
-        tm.code = encodeURIComponent(code.value);
-        tms.push(tm);
-        
-        var d = new Date();
-        var days = 90;
-        d.setTime(d.getTime() + (days*24*60*60*1000));
-        
-        progName.value = "";
-        Cookies.set('tms', JSON.stringify(tms), { expires: 90 });
-        fillTMCookieList();
-    }
+	if (!compile()){
+		return;
+	} else if (!progName.value){
+		alert("Please give the program a name :)");
+		return;
+	} else if (!code.value && !text.value){
+		alert("Code and Tape are blank!");
+		return;
+	} else{
+		var tms;
+		try{
+			tms = JSON.parse(Cookies.get("tms"));
+		} catch (e){
+			tms = [];
+		}
+		var tm = {};
+		tm.id = progName.value;
+		tm.name = progName.value;
+		tm.desc = "";
+		tm.tape = text.value;
+		tm.code = encodeURIComponent(code.value);
+		tms.push(tm);
+		
+		var d = new Date();
+		var days = 90;
+		d.setTime(d.getTime() + (days*24*60*60*1000));
+		
+		progName.value = "";
+		Cookies.set('tms', JSON.stringify(tms), { expires: 90 });
+		fillTMCookieList();
+	}
 }
 
 
@@ -241,43 +266,43 @@ function saveToCookies(){
 
 text.onkeypress = function(e){
   if (e.keyCode == 13){ // Enter
-    loadTape();
-    this.blur();
+	loadTape();
+	this.blur();
   }
 };
 
 document.onkeypress = function(e){
-    if (!(e.ctrlKey && e.which == 115) && !(e.which == 19)) return true;
-    saveToCookies();
-    fillTMCookieList();
-    e.preventDefault();
-    return false;
+	if (!(e.ctrlKey && e.which == 115) && !(e.which == 19)) return true;
+	saveToCookies();
+	fillTMCookieList();
+	e.preventDefault();
+	return false;
 };
 
 var selected = null;
 var x_pos = 0, x_elem = 0;
 
 function onDown(e){
-    selected = this;
-    x_pos = e.touches ? e.touches[0].pageX : e.pageX;
-    x_elem = x_pos - selected.offsetLeft;
-    document.body.style.cursor = "ew-resize";
-    return false;
+	selected = this;
+	x_pos = e.touches ? e.touches[0].pageX : e.pageX;
+	x_elem = x_pos - selected.offsetLeft;
+	document.body.style.cursor = "ew-resize";
+	return false;
 }
 
 function onDrag(e){
-    if (selected){
-        x_pos = e.touches ? e.touches[0].pageX : e.pageX;
-        selected.style.left = (x_pos - x_elem - 20) + 'px';
-    }
+	if (selected){
+		x_pos = e.touches ? e.touches[0].pageX : e.pageX;
+		selected.style.left = (x_pos - x_elem - 20) + 'px';
+	}
 }
 
 function onUp(e){
-    document.body.style.cursor = "default";
-    if (selected && parseInt(selected.style.left, 10)>0){
-        selected.style.left = 0 + 'px';
-    }
-    selected = null;
+	document.body.style.cursor = "default";
+	if (selected && parseInt(selected.style.left, 10)>0){
+		selected.style.left = 0 + 'px';
+	}
+	selected = null;
 }
 
 tape.onmousedown = onDown;
@@ -290,44 +315,44 @@ tape.addEventListener("touchend", onUp);
 /* ========== Aux functions ========== */
 
 function log(msg){
-    console.log(msg);
-    label.innerHTML = msg;
+	console.log(msg);
+	label.innerHTML = msg;
 }
 
 function isSymb(str){
-    return (str && str.length == 1);
+	return (str && str.length == 1);
 }
 
 function isState(exp){
-    if (!exp) return false;
-    if (!isNaN(exp) && (exp % 1 == 0)){
-        return true; // is Integer
-    } else if("IAR".indexOf(exp) != -1){ // is initial/accept/reject state
-        return true;
-    } else if(exp){ // meh, take anything
-        return true;
-    } else{
-        return false;
-    }
+	if (!exp) return false;
+	if (!isNaN(exp) && (exp % 1 == 0)){
+		return true; // is Integer
+	} else if("IAR".indexOf(exp) != -1){ // is initial/accept/reject state
+		return true;
+	} else if(exp){ // meh, take anything
+		return true;
+	} else{
+		return false;
+	}
 }
 
 function hasParams(url){
-    if (!url) url = window.location.href;
-    var loc = window.location;
-    return url[url.indexOf(loc.pathname)+loc.pathname.length] == "?";
+	if (!url) url = window.location.href;
+	var loc = window.location;
+	return url[url.indexOf(loc.pathname)+loc.pathname.length] == "?";
 }
 
 function getParam(name, url){
-    if (!url) url = window.location.href;
-    name = name.replace(/[\[\]]/g, "\\$&");
-    var regex = new RegExp("[?&]" + name + "(=([^&#]*)|&|#|$)"),
-        results = regex.exec(url);
-    if (!results) return null;
-    if (!results[2]) return '';
-    return decodeURIComponent(results[2].replace(/\+/g, " "));
+	if (!url) url = window.location.href;
+	name = name.replace(/[\[\]]/g, "\\$&");
+	var regex = new RegExp("[?&]" + name + "(=([^&#]*)|&|#|$)"),
+		results = regex.exec(url);
+	if (!results) return null;
+	if (!results[2]) return '';
+	return decodeURIComponent(results[2].replace(/\+/g, " "));
 }
 
 function clearSelect(select){ // clear all but first
-    while (select.length>1)
-        select.remove(1);
+	while (select.length>1)
+		select.remove(1);
 }
