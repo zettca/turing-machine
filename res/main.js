@@ -115,6 +115,13 @@ function fillTable(){
 }
 
 function drawGraph(){
+	var render = function(r, n) {
+		var set = r.set().push(
+		r.rect(n.point[0] - 30, n.point[1] - 10, 60, 38).attr({"fill": "#ccc", r : "20px" })).push(
+		r.text(n.point[0], n.point[1] + 10, n.label || n.id).attr({"font-size":"16px"}));
+		return set;
+	};
+	
 	var canvas = document.getElementById("canvas");
 	var trans = tm.trans;
 	
@@ -122,16 +129,18 @@ function drawGraph(){
 	
 	var g = new Graph();
 	
+	for (var state in trans) g.addNode(state, {render: render});
 	for (var state in trans){
 		for (var read in trans[state]){
 			var t = trans[state][read];
-			//console.log(t);
-			g.addEdge(state, t.s, {directed: true, label: read+">"+t.w+","+t.d});
+			if (state != t.s){
+				var lbl = ((read == " ") ? "□" : read)+","+t.w+","+t.d;
+				g.addEdge(state, t.s, {directed: true, stroke: "#999", label: lbl});
+			}
 		}
 	}
-	
 	var layouter = new Graph.Layout.Spring(g);
-	var renderer = new Graph.Renderer.Raphael('canvas', g, 600, 400);
+	var renderer = new Graph.Renderer.Raphael('canvas', g, 500, 400);
 	
 	layouter.layout();
 	renderer.draw();
