@@ -64,9 +64,16 @@ function fillTable(){
 	var isDec = true;
 	while(table.rows.length > 0) table.deleteRow(0);
 	
-	var reads = [];
+	var reads = [tm.emptyChar];
 	for (var c of tm.tapeWord) if (reads.indexOf(c) == -1) reads.push(c);
-	reads.push(tm.emptyChar);
+	X = trans;
+	for (var st in trans){
+		for (var c in trans[st]){
+			if (reads.indexOf(c) == -1){
+				reads.push(c);
+			}
+		}
+	}
 	
 	if (trans<2) return;
 	

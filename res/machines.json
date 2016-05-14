@@ -26,14 +26,14 @@
         "name": "0^n 1^n",
         "desc": "000 ~ 111",
         "tape": "000001111",
-        "code": ";StartUp\nI, ,R, ,S\nI,1,R,1,S\nI,0,st0, ,R\n\n;skip through 0s\nst0,0,st0,0,R\nst0,1,st1,1,R\nst0, ,R, ,S\n\n;skip through 1s\nst1,1,st1,1,R\nst1,0,R,0,S\nst1, ,st1x, ,L\n;check match 1\nst1x,1,r0, ,L\nst1x,0,R,0,S\n\n;reset to 1st 0\nr0,1,r0,1,L\nr0,0,r0,0,L\n;clear 1st 0\nr0, ,r0x, ,R\nr0x, ,A, ,S\nr0x,0,st0, ,R\nr0x,1,R,1,S"
+        "code": "I, ,R,S\nI,1,R,S\nI,0,S, ,R\n\n; SkipThrough\nS,0,R\nS,1,R\nS, ,Sx,L\nSx,1,S1, ,L\nS1, ,A,S\nS1,0,R,S\nS1,1,B,L\n\n; GoBack\nB,1,L\nB,0,L\nB, ,I,R"
       },
       {
         "id": "seq0n1n2",
-        "name": "0^n 1^n 2",
-        "desc": "000 ~ 111 less code, slower",
+        "name": "0^n 1^n best",
+        "desc": "000 ~ 111 n*log(n)",
         "tape": "000001111",
-        "code": "I, ,R, ,S\nI,1,R,1,S\nI,0,f, ,R\n\n; go finish\nf,0,f,0,R\nf,1,f,1,R\nf, ,f0, ,L\nf0,1,f1, ,L\nf1, ,A, ,S\nf1,0,R,0,S\nf1,1,s,1,L\n\n; go back\ns,1,s,1,L\ns,0,s,0,L\ns, ,I, ,R"
+        "code": "I, ,R,S\nI,1,R,S\nI,0,S, ,R\n\n; SkipThrough\nS,0,R\nS,1,R\nS, ,Sx,L\nSx,1,S1, ,L\nS1, ,A,S\nS1,0,R,S\nS1,1,B,L\n\n; GoBack\nB,1,L\nB,0,L\nB, ,I,R"
       },
       {
         "id": "binaryAdd1",
@@ -61,7 +61,7 @@
         "name": "Binary Palindrome?",
         "desc": "Checks if palindrome",
         "tape": "0011100",
-        "code": "I, ,A,S\nI,0,L0,R\nI,1,L1,R\nL0, ,0,L\nL0,0,R\nL0,1,R\nL1, ,1,L\nL1,0,R\nL1,1,R\n0, ,A,S\n0,0,B,L\n0,1,R,S\n1, ,A,S\n1,0,R,S\n1,1,B,L\nB,0,L\nB,1,L\nB, ,I,R"
+        "code": "I, ,A,S\nI,0,L0, ,R\nI,1,L1, ,R\nL0, ,0,L\nL0,0,R\nL0,1,R\nL1, ,1,L\nL1,0,R\nL1,1,R\n0, ,A,S\n0,0,B, ,L\n0,1,R,S\n1, ,A,S\n1,0,R,S\n1,1,B, ,L\nB,0,L\nB,1,L\nB, ,I,R"
       }
     ]
 }
