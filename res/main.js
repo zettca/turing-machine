@@ -102,16 +102,20 @@ function fillTable(){
 			td = tr.insertCell();
 			if (t){
 				var w = (t.w == " ") ? "&#9633;" : t.w;
+				w = (w == r) ? "" : w;
 				td.innerHTML = w+" <b>"+t.s+"</b> "+t.d;
 				if (t.s == tm.stateAccept){
 					td.classList.add("bg-green");
+					td.title = "Transition to Accept state";
 				} else if (t.s == tm.stateReject){
 					td.classList.add("bg-red");
+					td.title = "Transition to Reject state";
 				}
 			} else{
 				td.innerHTML = "&#10008;";
+				td.title = "Transition not defined";
 				isDec = false;
-				td.classList.add("#FFC");
+				td.classList.add("bg-yellow");
 			}
 		}
 	}
