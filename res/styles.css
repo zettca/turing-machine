@@ -23,31 +23,15 @@ select, label{
 	display: block;
 }
 
-table{
-	font-family: monospace;
-	border: 1px solid black;
-	text-align: center;
+input[type=number]{
+	width: 40px;
 }
 
-th, td{
-	padding: 4px 10px;
-	border: 1px solid black;
+input[type=text]{
+	width: 120px;
 }
-
-table tr:first-child, table td:first-child{
-	font-weight: bold;
-}
-
 
 /* ============================ */
-
-#tape{
-	display: table;
-	margin-top: 10px;
-	margin-left: 20px;
-	position: relative;
-	border-collapse: collapse;
-}
 
 .no-select{
 	-ms-user-select: none;
@@ -125,10 +109,41 @@ table tr:first-child, table td:first-child{
 	display: inline;
 }
 
-input[type=number]{
-	width: 40px;
+.bg-yellow{ background-color: #FCC; }
+.bg-green{ background-color: #CFC; }
+.bg-red{ background-color: #FCC; }
+
+/* ============================ */
+
+#tape{
+	display: table;
+	margin-top: 10px;
+	margin-left: 20px;
+	position: relative;
+	border-collapse: collapse;
 }
 
-input[type=text]{
-	width: 120px;
+#tableTrans{
+	font-family: monospace;
+	border: 1px solid black;
+	text-align: center;
+}
+
+#tableTrans th, #tableTrans td{
+	padding: 4px 10px;
+	border: 1px solid black;
+}
+
+#tableTrans tr:first-child td:first-child{
+	padding: 24px 0;
+	font-size: 0.9em;
+	transform: rotate(-90deg);
+}
+
+#tableTrans tr:first-child{
+	font-family: sans-serif;
+}
+
+#tableTrans tr:first-child, #tableTrans tr:nth-child(2), #tableTrans td:first-child{
+	font-weight: bold;
 }
