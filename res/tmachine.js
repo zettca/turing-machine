@@ -1,10 +1,14 @@
 var TuringMachine = function(el){
+  // constants
   this.tapeEle = el;
   this.emptyChar = " ";
   this.stateInit = "I";
   this.stateAbort = "X";
   this.stateAccept = "A";
   this.stateReject = "R";
+  this.transLeft = "←";
+  this.transRight = "→";
+  this.transStill = "↓";
 
   this.restart = function(){
     this.canRun = true;
@@ -13,22 +17,20 @@ var TuringMachine = function(el){
     this.headPos = 1;
     this.state = this.stateInit;
     this.trans = {};
-    this.iters = 1;
+    this.iters = 0;
     this.msg = "";
   };
   
   this.restart();
   
-  this.setMsg = function(msg){
+  this.pushMsg = function(msg){
     this.msg = msg;
     console.log(msg);
   };
   
   this.iter = function(){
     this.iters++;
-    if (this.iters > 10000){
-      this.canRun = false;
-    }
+    this.canRun = !(this.iters > 10000);
   };
   
   this.setState = function(st){
@@ -36,41 +38,32 @@ var TuringMachine = function(el){
     switch (this.state){
       case this.stateAbort:
         this.canRun = false;
-        this.setMsg("Machine Aborted!");
+        this.pushMsg("Machine Aborted!");
         break;
       case this.stateAccept:
         this.canRun = false;
-        this.setMsg("Machine finished in "+this.iters+" iterations with Accept state.");
+        this.pushMsg("Machine finished in "+this.iters+" iterations with Accept state.");
         break;
       case this.stateReject:
         this.canRun = false;
-        this.setMsg("Machine finished in "+this.iters+" iterations with Reject state.");
+        this.pushMsg("Machine finished in "+this.iters+" iterations with Reject state.");
         break;
       default:
-        this.setMsg("@ Iteration " + this.iters + ", State " + this.state + ", Position " + this.headPos);
+        this.pushMsg(this.iters + " Iterations, State " + this.state + ", Position " + this.headPos);
         break;
     }
   };
   
-  this.incHeadPos = function(i){
-    this.headPos = this.headPos+i;
-  };
-  
   this.moveHead = function(dir){
     switch (dir){
-      case 'L':
-      case '<':
-        this.incHeadPos(-1);
+      case this.transLeft:
+        this.headPos--;
         break;
-      case 'R':
-      case '>':
-        this.incHeadPos(1);
+      case this.transRight:
+        this.headPos++;
         break;
-      case 'N':
-      case 'S':
-      case '-':
-      default:
-        this.incHeadPos(0);
+      case this.transStill:
+        this.headPos+=0;
         break;
     }
   };
@@ -96,14 +89,15 @@ var TuringMachine = function(el){
   };
   
   this.setTape = function(str){
-    this.setMsg("Loading to Tape: " + str);
+    this.pushMsg("Loading to Tape: " + str);
     this.clearTape();
     this.tapeWord = str;
 
     for (var i=0; i<this.tapeCellNum; i++){
       var cell = document.createElement("div");
+      var nulle = (this.tapeWord[i] && this.tapeWord[i] != this.emptyChar);
+      cell.innerHTML = nulle ? this.tapeWord[i] : " ";
       cell.classList.add("cell");
-      cell.innerHTML = this.tapeWord[i] ? this.tapeWord[i] : this.emptyChar;
       cell.setAttribute("index", (this.tapeWord[i]) ? i+1 : "");
       this.tapeEle.appendChild(cell);
     }
@@ -132,13 +126,13 @@ var TuringMachine = function(el){
     
     if (this.headPos < 1 || this.headPos > this.tapeCellNum){
       this.setState(this.stateAbort);
-      this.setMsg("Maching aborted. Head out of bounds!");
+      this.pushMsg("Maching aborted. Head out of bounds!");
       return;
     }
     
     if (!tranState){
       this.setState(this.stateAbort);
-      this.setMsg("Maching aborted. No transition state!");
+      this.pushMsg("Maching aborted. No transition state!");
       return;
     }
     
