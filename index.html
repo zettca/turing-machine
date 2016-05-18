@@ -4,73 +4,71 @@
 	<title>Turing Machine</title>
 	<meta charset="UTF-8" content="text/html">
 	<meta name="viewport" content="width=device-width, initial-scale=1">
-	<meta name="description" content="Turing Machine">
-	<meta name="keywords" content="Turing Machine Computer Science Complexity zettca">
-
+	<meta name="description" content="An online Turing Machine Emulator">
+	<meta name="keywords" content="Online Turing Machine Emulator GitHub Pages Computer Science Complexity zettca">
 	<link rel="shortcut icon" href="favicon.ico">
-	<link rel='stylesheet' href='https://fonts.googleapis.com/css?family=Open+Sans'>
-	<link rel='stylesheet' href='https://fonts.googleapis.com/css?family=Roboto+Mono'>
-	<link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/normalize/3.0.3/normalize.min.css">
-	<link rel="stylesheet" href="res/styles.css">
 </head>
 
-<body>
-	<section class="wrapIt no-select"><div id="tape"></div></section>
-	
-	<section>
-		<input type="text" name="tapeText" placeholder="Tape word"/>
-		<input type="button" value="Load" onclick="loadTape()"/>
-		<span style="margin: 0 4px">|</span>
-		<input type="button" value="Run" onclick="run()"/>
-		<input type="button" value="Step" onclick="stepe()"/>
-		<input type="button" value="Reset" onclick="reset()"/>
-		<br/>
-		<span id="tmState"></span>
-	</section>
-	
-	<section class="code fblock">
-		<h3>Code</h3>
-		<label for="tmList">Load a program:</label>
-		<select id="tmList" onchange="loadProgram(this.value)">
-			<option disabled selected value="null">Select an option</option>
-		</select>
-		<textarea id="code" name="tapeCode" placeholder="I,A,I,B,>"></textarea>
-		<input type="button" value="Compile Code" onclick="compile()"/>
-	</section>
-	
-	<section class="save-load fblock">
-		<h3>Load & Save</h3>
-		<label for="tmListSaved">Load a saved program:</label>
-		<select id="tmListSaved" onchange="loadProgram(this.value)">
-			<option disabled selected value="null">Select an option</option>
-		</select>
-		<br/>
-		<label for="programName">Save current program:</label>
-		<input type="text" name="programName" placeholder="Program name"/>
-		<input type="button" value="Save" onclick="saveToCookies()"/>
-	</section>
-	
-	<section class="fblock">
-		<h3>Transition Table</h3>
-		<table id="tableTrans"></table>
-		<span id="tmInfo"></span>
-	</section>
-	
-	<section class="fblock">
-		<h3>Graph Representation</h3>
-		<div id="canvas"></div>
-	</section>
-	
-	<footer></footer>
-	<script src="res/jscookie.min.js"></script>
-	<script src="res/tmachine.js"></script>
-	<script src="res/tmcompiler.js"></script>
-	<script src="res/scripts.js"></script>
-	<script src="res/main.js"></script>
-	<script src="res/events.js"></script>
-	<script type="text/javascript" src="res/jquery-1.4.2.min.js"></script>
-	<script type="text/javascript" src="res/raphael.min.js"></script>
-	<script type="text/javascript" src="res/dracula_graffle.js"></script>
-	<script type="text/javascript" src="res/dracula_graph.js"></script>
-</body>
-</html>
+
+<link rel='stylesheet' href='https://fonts.googleapis.com/css?family=Open+Sans'>
+<link rel='stylesheet' href='https://fonts.googleapis.com/css?family=Roboto+Mono'>
+<link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/normalize/3.0.3/normalize.min.css">
+<link rel="stylesheet" href="res/styles.css">
+
+<section class="wrapIt no-select"><div id="tape"></div></section>
+
+<section>
+	<input type="text" name="tapeText" placeholder="Tape word"/>
+	<input type="button" value="Load" onclick="loadTape()"/>
+	<span style="margin: 0 4px">|</span>
+	<input type="button" value="Run" onclick="run()"/>
+	<input type="button" value="Step" onclick="stepe()"/>
+	<input type="button" value="Reset" onclick="reset()"/>
+	<br/>
+	<span id="tmState"></span>
+</section>
+
+<section class="code fblock">
+	<h3>Code</h3>
+	<label for="tmList">Load a program:</label>
+	<select id="tmList" onchange="loadProgram(this.value)">
+		<option disabled selected value="null">Select an option</option>
+	</select>
+	<textarea id="code" name="tapeCode" placeholder="I,A,I,B,>"></textarea>
+	<input type="button" value="Compile Code" onclick="compile()"/>
+</section>
+
+<section class="save-load fblock">
+	<h3>Load & Save</h3>
+	<label for="tmListSaved">Load a saved program:</label>
+	<select id="tmListSaved" onchange="loadProgram(this.value)">
+		<option disabled selected value="null">Select an option</option>
+	</select>
+	<br/>
+	<label for="programName">Save current program:</label>
+	<input type="text" name="programName" placeholder="Program name"/>
+	<input type="button" value="Save" onclick="saveToCookies()"/>
+</section>
+
+<section class="fblock">
+	<h3>Transition Table</h3>
+	<table id="tableTrans"></table>
+	<span id="tmInfo"></span>
+</section>
+
+<section class="fblock">
+	<h3>Graph Representation</h3>
+	<div id="canvas"></div>
+</section>
+
+<footer></footer>
+<script src="res/jscookie.min.js"></script>
+<script src="res/tmachine.js"></script>
+<script src="res/tmcompiler.js"></script>
+<script src="res/scripts.js"></script>
+<script src="res/main.js"></script>
+<script src="res/events.js"></script>
+<script type="text/javascript" src="res/jquery-1.4.2.min.js"></script>
+<script type="text/javascript" src="res/raphael.min.js"></script>
+<script type="text/javascript" src="res/dracula_graffle.js"></script>
+<script type="text/javascript" src="res/dracula_graph.js"></script>
