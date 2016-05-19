@@ -77,7 +77,6 @@ function fillTable(){
 	
 	var reads = [tm.emptyChar];
 	for (var c of tm.tapeWord) if (reads.indexOf(c) == -1) reads.push(c);
-	X = trans;
 	for (var st in trans){
 		for (var c in trans[st]){
 			if (reads.indexOf(c) == -1){
@@ -94,7 +93,7 @@ function fillTable(){
 	td.rowSpan = 2;
 	td.innerHTML = "Symbol";
 	td = tr.insertCell();
-	td.colSpan = 0;
+	td.colSpan = Object.keys(trans).length;
 	td.innerHTML = "States";
 	
 	tr = table.insertRow();
