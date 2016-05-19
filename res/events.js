@@ -10,8 +10,8 @@ text.onkeypress = function(e){
 
 document.onkeypress = function(e){  // (Ctrl + S)ave to cookies
 	if (!(e.ctrlKey && e.which == 115) && !(e.which == 19)) return true;
-	saveToCookies();
-	fillTMCookieList();
+	saveToLocal();
+	fillTMLocalList();
 	e.preventDefault();
 	return false;
 };

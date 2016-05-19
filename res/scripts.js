@@ -169,9 +169,7 @@ function drawGraph(){
 }
 
 function saveToLocal(){
-	if (!compile()){
-		return;
-	} else if (!progName.value){
+	if (!progName.value){
 		alert("Please give the program a name!");
 		return;
 	} else if (!code.value || !text.value){
@@ -179,8 +177,8 @@ function saveToLocal(){
 		return;
 	}
 
-	var tms = localStorage.tms;
-
+	var tms = JSON.parse(localStorage.getItem("tms")) || [];
+	
 	var tm = {};
 	tm.id = encodeURIComponent(progName.value);
 	tm.name = progName.value;
@@ -188,6 +186,8 @@ function saveToLocal(){
 	tm.tape = text.value;
 	tm.code = encodeURIComponent(code.value);
 	tms.push(tm);
+
+	localStorage.setItem("tms", JSON.stringify(tms));
 	
 	fillTMLocalList();
 }
@@ -213,8 +213,7 @@ function fillTMList(){
 
 function fillTMLocalList(){
 	var tmLocalList = document.getElementById("tmListSaved");
-	var programListSaved = localStorage.tms || [];
-
+	programListSaved = JSON.parse(localStorage.getItem("tms")) || [];
 	fillSelect(tmLocalList, programListSaved);
 }
 
