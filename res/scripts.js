@@ -94,7 +94,7 @@ function fillTable(){
 	td.rowSpan = 2;
 	td.innerHTML = "Symbol";
 	td = tr.insertCell();
-	td.colSpan = reads;
+	td.colSpan = 0;
 	td.innerHTML = "States";
 	
 	tr = table.insertRow();
