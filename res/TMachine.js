@@ -1,6 +1,5 @@
-var TuringMachine = function(el){
+var TuringMachine = function(){
   // constants
-  this.tapeEle = el;
   this.emptyChar = " ";
   this.stateInit = "I";
   this.stateAbort = "X";
@@ -63,20 +62,12 @@ var TuringMachine = function(el){
         this.headPos++;
         break;
       case this.transStill:
-        this.headPos+=0;
         break;
     }
   };
   
-  this.clearTape = function(){
-    this.tapeWord = "";
-    while (this.tapeEle.firstChild){
-      this.tapeEle.removeChild(this.tapeEle.firstChild);
-    }
-  };
-  
-  this.readSymbol = function(){
-    return this.tapeWord[this.headPos-1] || this.emptyChar;
+  this.readSymbol = function(i){
+    return this.tapeWord[(i ? i : this.headPos)-1] || this.emptyChar;
   };
   
   this.writeSymbol = function(symbol, i){
@@ -84,23 +75,10 @@ var TuringMachine = function(el){
       return str.substr(0, i) + c + str.substr(i+c.length);
     }
     this.tapeWord = replaceAt(this.tapeWord, i-1, symbol);
-    this.tapeEle.children[i-1].innerHTML = symbol;
-    this.tapeEle.children[i-1].setAttribute("index", i);
   };
   
-  this.setTape = function(str){
-    this.pushMsg("Loading to Tape: " + str);
-    this.clearTape();
+  this.setWord = function(str){
     this.tapeWord = str;
-
-    for (var i=0; i<this.tapeCellNum; i++){
-      var cell = document.createElement("div");
-      var nulle = (this.tapeWord[i] && this.tapeWord[i] != this.emptyChar);
-      cell.innerHTML = nulle ? this.tapeWord[i] : " ";
-      cell.classList.add("cell");
-      cell.setAttribute("index", (this.tapeWord[i]) ? i+1 : "");
-      this.tapeEle.appendChild(cell);
-    }
   };
   
   this.clearTransitions = function(){
@@ -113,9 +91,9 @@ var TuringMachine = function(el){
   };
   
   
-  this.execTransition = function(newState, writeSymb, dir){
+  this.execTransition = function(newState, symbol, dir){
     this.iter();
-    this.writeSymbol(writeSymb, this.headPos);
+    this.writeSymbol(symbol, this.headPos);
     this.moveHead(dir);
     this.setState(newState);
   };
@@ -126,13 +104,11 @@ var TuringMachine = function(el){
     
     if (this.headPos < 1 || this.headPos > this.tapeCellNum){
       this.setState(this.stateAbort);
-      this.pushMsg("Maching aborted. Head out of bounds!");
+      this.pushMsg("Machine aborted. Head out of bounds!");
       return;
-    }
-    
-    if (!tranState){
+    } else if (!tranState){
       this.setState(this.stateAbort);
-      this.pushMsg("Maching aborted. No transition state!");
+      this.pushMsg("Machine aborted. No transition state!");
       return;
     }
     

@@ -123,6 +123,10 @@ input[type=text]{
 	border-collapse: collapse;
 }
 
+#tmState {
+	font-family: monospace;
+}
+
 #tableTrans{
 	font-family: monospace;
 	border: 1px solid black;

@@ -23,7 +23,6 @@
 	<input type="button" value="Run" onclick="run()"/>
 	<input type="button" value="Step" onclick="stepe()"/>
 	<input type="button" value="Reset" onclick="reset()"/>
-	<br/>
 	<span id="tmState"></span>
 </section>
 
@@ -46,7 +45,7 @@
 	<br/>
 	<label for="programName">Save current program:</label>
 	<input type="text" name="programName" placeholder="Program name"/>
-	<input type="button" value="Save" onclick="saveToCookies()"/>
+	<input type="button" value="Save" onclick="saveToLocal()"/>
 </section>
 
 <section class="fblock">
@@ -61,13 +60,14 @@
 </section>
 
 <footer></footer>
-<script src="res/jscookie.min.js"></script>
-<script src="res/tmachine.js"></script>
-<script src="res/tmcompiler.js"></script>
+
+<script src="res/TMachine.js"></script>
+<script src="res/TMCompiler.js"></script>
 <script src="res/scripts.js"></script>
 <script src="res/main.js"></script>
 <script src="res/events.js"></script>
-<script type="text/javascript" src="res/jquery-1.4.2.min.js"></script>
-<script type="text/javascript" src="res/raphael.min.js"></script>
-<script type="text/javascript" src="res/dracula_graffle.js"></script>
-<script type="text/javascript" src="res/dracula_graph.js"></script>
+
+<script src="res/jquery-1.4.2.min.js"></script>
+<script src="res/raphael.min.js"></script>
+<script src="res/dracula_graffle.js"></script>
+<script src="res/dracula_graph.js"></script>

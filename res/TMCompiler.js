@@ -60,7 +60,6 @@ var TMCompiler = function(tm, code){
 		
 		if (!err){
 			console.log("Program compiled successfully.");
-			tm.tapeEle.children[tm.headPos-1].classList.add("head");
 			fillTable();
 			drawGraph();
 			this.compiled = true;
