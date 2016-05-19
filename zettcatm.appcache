@@ -1,8 +1,8 @@
 CACHE MANIFEST
-/index.html
-/res/scripts.js
-/res/events.js
-/res/styles.css
-/res/TMachine.js
-/res/TMCompiler.js
-/res/machines.json
+index.html
+res/scripts.js
+res/events.js
+res/styles.css
+res/TMachine.js
+res/TMCompiler.js
+res/machines.json
