@@ -60,17 +60,14 @@ var TMCompiler = function(tm, code){
 		
 		if (!err){
 			console.log("Program compiled successfully.");
-			fillTable();
-			drawGraph();
 			this.compiled = true;
-			return true;
 		} else{
 			console.log("Error compiling program...");
 			console.log("Line " + (i+1) + ": " + err);
 			tm.clearTransitions();
 			this.compiled = false;
-			return false;
 		}
+		return this.compiled;
 	};
 };
 

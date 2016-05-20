@@ -5,6 +5,7 @@ var text = document.getElementsByName("tapeText")[0];
 var progName = document.getElementsByName("programName")[0];
 
 var programList, programListSaved;
+var arInterval, arSpeed = 200, isAutoRun = false;
 
 var tm = new TuringMachine();
 var tmc = new TMCompiler(tm, code);
@@ -34,7 +35,6 @@ function loadTape(str){
       cell.classList.add("cell");
       cell.setAttribute("index", worde ? i : "");
       tape.appendChild(cell);
-      CELLE = cell;
     }
 }
 
@@ -43,24 +43,47 @@ function run(){
 }
 
 function compile(){
-	tmc.compile();
+	if (tmc.compile()){
+		fillTable();
+		drawGraph();
+	}
 }
 
-function runDelay(){
-	stepe();
-	if (tm.canRun) setTimeout(runDelay, 300);
+function scrollSpeed(e){
+	var scroll = (e.deltaY>0) ? 10 : -10;
+	if (arSpeed >= 20 || scroll>0) arSpeed += scroll;
+	clearInterval(arInterval);
+	arInterval = setInterval(stepe, arSpeed);
+}
+
+function runDelay(el){
+	el.addEventListener("wheel", scrollSpeed);
+	if (!tm.canRun) return;
+	if (!isAutoRun){
+		arInterval = setInterval(stepe, arSpeed);
+	} else{
+		clearInterval(arInterval);
+	}
+	isAutoRun = !isAutoRun;
 }
 
 function stepe(){
-	tape.children[tm.headPos-1].classList.remove("head");
+	if (!tm.canRun && isAutoRun){
+		isAutoRun = false;
+		clearInterval(arInterval);
+	}
+	tape.children[(tm.headPos-1>0) ? tm.headPos-1 : 0].classList.remove("head");
 	tm.stepTransition();
 	loadTape(tm.tapeWord);
-	tape.children[tm.headPos-1].classList.add("head");
+	tape.children[(tm.headPos-1>0) ? tm.headPos-1 : 0].classList.add("head");
 
 	label.innerHTML = tm.msg;
 }
 
 function reset(){
+	arSpeed = 200;
+	isAutoRun = false;
+	clearInterval(arInterval);
 	tm.restart();
 	loadTape();
 	compile();
@@ -131,8 +154,8 @@ function fillTable(){
 	}
 
 	var infos = document.getElementById("tmInfo");
-	var wat = (isDec) ? "" : "not";
-	infos.innerHTML = "Machine is <b>"+wat+"</b> decidible";
+	var dec = (isDec) ? "" : "not";
+	infos.innerHTML = "Machine is <b>"+dec+"</b> decidible";
 }
 
 function drawGraph(){
@@ -175,8 +198,8 @@ function saveToLocal(){
 		alert("Code or Tape are blank!");
 		return;
 	}
-
-	var tms = JSON.parse(localStorage.getItem("tms")) || [];
+	
+	var tms = JSON.parse(window.localStorage.getItem("tms")) || [];
 	
 	var tm = {};
 	tm.id = encodeURIComponent(progName.value);
@@ -186,7 +209,7 @@ function saveToLocal(){
 	tm.code = encodeURIComponent(code.value);
 	tms.push(tm);
 
-	localStorage.setItem("tms", JSON.stringify(tms));
+	window.localStorage.setItem("tms", JSON.stringify(tms));
 	
 	fillTMLocalList();
 }
@@ -212,7 +235,7 @@ function fillTMList(){
 
 function fillTMLocalList(){
 	var tmLocalList = document.getElementById("tmListSaved");
-	programListSaved = JSON.parse(localStorage.getItem("tms")) || [];
+	programListSaved = JSON.parse(window.localStorage.getItem("tms")) || [];
 	fillSelect(tmLocalList, programListSaved);
 }
 

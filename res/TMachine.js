@@ -102,10 +102,14 @@ var TuringMachine = function(){
     if (!this.canRun) return;
     var tranState = this.trans[this.state][this.readSymbol()];
     
-    if (this.headPos < 1 || this.headPos > this.tapeCellNum){
-      this.setState(this.stateAbort);
+    if (this.headPos < 1 /*|| this.headPos > this.tapeCellNum*/){
+      /*this.setState(this.stateAbort);
       this.pushMsg("Machine aborted. Head out of bounds!");
-      return;
+      return;*/
+      this.tapeWord = " " + this.tapeWord;
+      this.headPos++;
+    tranState = this.trans[this.state][this.readSymbol()];
+      this.pushMsg("Shifting machine...");
     } else if (!tranState){
       this.setState(this.stateAbort);
       this.pushMsg("Machine aborted. No transition state!");
