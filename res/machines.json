@@ -30,10 +30,17 @@
       },
       {
         "id": "seq0n1n2",
-        "name": "0^n 1^n best",
+        "name": "0^n 1^n log",
         "desc": "000 ~ 111 n*log(n)",
         "tape": "000000000000111111111111",
         "code": "I, ,A,S\nI,x,R,S\nI,1,R,S\nI,0,Pi,S\n\n; Init check\nPi,x,R\nPi, ,A,S\nPi,0,Pe,S\nPi,1,Pe,S\n; Even check\nPe,x,R\nPe,0,Po,R\nPe,1,Po,R\nPe, ,C1,L\nPo,x,R\nPo,0,Pe,R\nPo,1,Pe,R\nPo, ,R,S\n\n; Cut 0/1\nC0,x,L\nC0,0,S0,x,L\nC0,1,R,S\nC0, ,Pe,R\nC1,x,L\nC1,0,C0,S\nC1,1,S1,x,L\nC1, ,R,S\n; Skip 0/1\nS0,x,L\nS0,0,C0,L\nS0,1,R,S\nS0, ,Pi,R\nS1,x,L\nS1,0,C0,S\nS1,1,C1,L\nS1, ,R,S"
+      },
+      {
+        "id": "seq0n1n3",
+        "name": "0^n 1^n log short",
+        "desc": "000 ~ 111 n*log(n) shorter undecidable version",
+        "tape": "000000000000111111111111",
+        "code":"I,x,R\nI, ,A,S\nI,0,E,S\n; Even-check\nE,x,R\nE,0,O,R\nE,1,O,R\nE, ,C1,L\nO,x,R\nO,0,E,R\nO,1,E,R\nO, ,R,S\n; Cut 0s/1s\nC0,x,L\nC0,0,S0,x,L\nC0, ,E,R\nC1,x,L\nC1,0,C0,S\nC1,1,S1,x,L\nS0,x,L\nS0,0,C0,L\nS0, ,I,R\nS1,x,L\nS1,0,C0,S\nS1,1,C1,L",
       },
       {
         "id": "binaryAdd1",
